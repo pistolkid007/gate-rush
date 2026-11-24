@@ -29,6 +29,16 @@
     color:#1b1b1b;background:linear-gradient(#ffe45c,#ffb92e);box-shadow:0 5px 0 #b9780f,0 10px 24px rgba(0,0,0,.35);
     letter-spacing:1px;touch-action:manipulation}
   button#go:active{transform:translateY(3px);box-shadow:0 2px 0 #b9780f}
+  #lb{margin:14px auto 0;max-width:290px;font-size:14px;text-align:left}
+  #lb .lt{text-align:center;font-weight:900;letter-spacing:2px;color:#ffd53d;margin-bottom:4px}
+  #lb .lr{display:flex;gap:8px;padding:3px 8px;border-radius:6px}
+  #lb .lr.me{background:rgba(255,213,61,.25)}
+  #lb .lr b{width:18px;color:#ffd53d}#lb .lr i{flex:1;font-style:normal;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  #lb .lr u{text-decoration:none;font-weight:800}#lb .lr em{font-style:normal;color:#9fd3df;width:34px;text-align:right}
+  #lb .ls{text-align:center;font-size:11px;color:#9fd3df;margin-top:4px}
+  #nameBox{margin-top:12px}.nbt{font-size:14px;font-weight:800;color:#ffd53d;margin-bottom:8px}
+  #nm{width:70%;padding:10px;font-size:18px;font-weight:800;text-align:center;text-transform:uppercase;border-radius:10px;border:2px solid #ffd53d;background:rgba(0,0,0,.4);color:#fff}
+  #nmok{display:block;margin:10px auto 0;padding:11px 22px;border-radius:12px;border:0;font-size:16px;font-weight:900;background:#5fe36b;color:#10300f}
   #best{margin-top:16px;font-size:13px;color:#9fd3df}
   #bomb{position:fixed;left:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:5;width:68px;height:68px;
     border-radius:34px;border:0;display:none;background:radial-gradient(circle at 35% 30%,#ffb04a,#c4260f);color:#fff;font-size:30px;
@@ -52,6 +62,10 @@
   <div class="how">Drag to move · auto-fire</div>
   <button id="go">PLAY</button>
   <button id="sec" style="display:none"></button>
+  <div id="nameBox" style="display:none"><div class="nbt">NEW HIGH SCORE! Enter name or initials</div>
+    <input id="nm" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="YOUR NAME">
+    <button id="nmok">SAVE SCORE</button></div>
+  <div id="lb"></div>
   <div id="best"></div>
 </div></div>
 <button id="bomb" aria-label="Launch bomb" data-n="0">💣</button>
@@ -187,6 +201,61 @@ function reset(){
   M.state='live'; setMega(0); M.hit=0; M.drop=0; M.timer=0; M.fire=0;
   player.x=player.tx=0; player.fireT=0;
 }
+/* ---------- leaderboard (global when BOARD_ID is set, else this device) ---------- */
+const BOARD_ID='https://gate-rush-game-default-rtdb.firebaseio.com';  // Firebase Realtime Database URL, e.g. https://xxxx-default-rtdb.firebaseio.com
+const BOARD_URL=BOARD_ID.replace(/\/+$/,'')+'/gaterush/top.json', BKEY='gaterush.board1';
+let board=[], boardStatus='', boardSubmitted=false, lastName='';
+try{board=JSON.parse(localStorage.getItem(BKEY)||'[]')||[];lastName=localStorage.getItem('gaterush.name')||'';}catch(e){board=[]}
+const cleanBoard=a=>(Array.isArray(a)?a:[]).filter(r=>r&&typeof r.s==='number'&&isFinite(r.s)).map(r=>({n:String(r.n||'???').slice(0,10),s:Math.floor(r.s),w:Math.floor(r.w)||0})).sort((a,b)=>b.s-a.s).slice(0,5);
+const saveCache=()=>{try{localStorage.setItem(BKEY,JSON.stringify(board))}catch(e){}};
+async function jfetch(method,body){
+  const ac=new AbortController(), tm=setTimeout(()=>ac.abort(),6000);
+  try{
+    const r=await fetch(BOARD_URL,{method,signal:ac.signal,headers:{'Accept':'application/json','Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});
+    if(!r.ok)throw new Error('http '+r.status);
+    return method==='GET'?await r.json():true;
+  }finally{clearTimeout(tm)}
+}
+async function refreshBoard(){
+  if(!BOARD_ID){boardStatus='This device only';renderLB();return;}
+  try{const d=await jfetch('GET');board=cleanBoard(d&&Object.values(d));saveCache();boardStatus='Everyone';}
+  catch(e){boardStatus='Offline: showing last saved';}
+  renderLB();
+}
+const qualifies=sc=>sc>0&&(board.length<5||sc>board[4].s);
+function renderLB(hi){
+  const lb=$('lb'); if(!lb)return; lb.textContent='';
+  const t=document.createElement('div'); t.className='lt'; t.textContent='🏆 TOP 5'; lb.appendChild(t);
+  if(!board.length){const e=document.createElement('div');e.className='ls';e.textContent='No scores yet. Be the first.';lb.appendChild(e);}
+  board.forEach((r,i)=>{
+    const d=document.createElement('div'); d.className='lr'+(i===hi?' me':'');
+    const a=document.createElement('b'),n=document.createElement('i'),sc=document.createElement('u'),w=document.createElement('em');
+    a.textContent=i+1; n.textContent=r.n; sc.textContent=r.s.toLocaleString(); w.textContent='W'+r.w;
+    d.append(a,n,sc,w); lb.appendChild(d);
+  });
+  if(boardStatus){const f=document.createElement('div');f.className='ls';f.textContent=boardStatus;lb.appendChild(f);}
+}
+async function submitScore(){
+  if(boardSubmitted)return; boardSubmitted=true;
+  const name=($('nm').value||'').replace(/[^\w .\-!?*]/g,'').trim().toUpperCase().slice(0,10)||'ANON';
+  lastName=name; try{localStorage.setItem('gaterush.name',name)}catch(e){}
+  $('nameBox').style.display='none';
+  const entry={n:name,s:S.score,w:S.wave};
+  try{
+    if(BOARD_ID){let cur=board;try{cur=cleanBoard(Object.values((await jfetch('GET'))||{}));}catch(e){}
+      board=cleanBoard(cur.concat([entry])); await jfetch('PUT',board); boardStatus='Everyone';}
+    else{board=cleanBoard(board.concat([entry]));boardStatus='This device only';}
+  }catch(e){board=cleanBoard(board.concat([entry]));boardStatus='Offline: saved on this device only';}
+  saveCache();
+  renderLB(board.findIndex(r=>r.n===name&&r.s===entry.s));
+}
+async function afterOver(){
+  await refreshBoard();
+  if(S.mode==='over'&&!boardSubmitted&&qualifies(S.score)){
+    $('nm').value=lastName; $('nameBox').style.display='block'; renderLB();
+    const t=document.querySelector('.nbt'); t.textContent=(board.length&&S.score>board[0].s)?'NEW #1! Enter name or initials':'TOP 5 SCORE! Enter name or initials';
+  }
+}
 let paused=false;
 const SAVE_KEY='gaterush.save1';
 function hasSave(){try{return !!localStorage.getItem(SAVE_KEY)}catch(e){return false}}
@@ -211,7 +280,7 @@ function loadGame(){
 function showOv(title,stats,goTxt,secTxt){
   $('ttl').textContent=title; $('sub').style.display='none';
   const st=$('stats'); st.style.display=stats?'block':'none'; st.innerHTML=stats||'';
-  $('go').textContent=goTxt; const sc=$('sec'); sc.style.display=secTxt?'inline-block':'none'; sc.textContent=secTxt||'';
+  $('nameBox').style.display='none'; renderLB(); $('go').textContent=goTxt; const sc=$('sec'); sc.style.display=secTxt?'inline-block':'none'; sc.textContent=secTxt||'';
   $('ov').classList.remove('hide');
 }
 function pauseGame(){
@@ -241,7 +310,8 @@ function gameOver(){
     st.innerHTML='Score <b>'+S.score+'</b><br>Wave <b>'+S.wave+'</b> · Firepower <b>'+S.level+'</b>';
     $('go').textContent='PLAY AGAIN';
     $('best').textContent='Best: '+S.best;
-    $('ov').classList.remove('hide');
+    boardSubmitted=false; $('nameBox').style.display='none';
+    $('ov').classList.remove('hide'); renderLB(); afterOver();
   },700);
 }
 function hurt(n){
@@ -1125,6 +1195,8 @@ function drawHUD(){
   outlinedText('HP '+S.hp,bx+8,top+bh/2+1,11,'#fff','#000',3);
   // score
   ctx.textAlign='right'; outlinedText(String(S.score),gx1-pad,top+10,24,'#fff','#000');
+  if(board.length){const top1=board[0];ctx.textAlign='right';
+    outlinedText(S.score>=top1.s?'👑 YOU ARE #1':'🏆 '+top1.s.toLocaleString()+' · '+top1.n,gx1-pad,top+32,11,'#ffe27a','#000',3);}
   // wave
   ctx.textAlign='center'; outlinedText(S.wave?('WAVE '+S.wave):'GET READY',cx+GW*0.02,top+bh/2+1,15,'#ffd0d0','#000');
   // firepower chip
@@ -1173,6 +1245,9 @@ window.addEventListener('keyup',e=>{
   if(e.key==='ArrowLeft'||e.key==='a')keys.l=0; if(e.key==='ArrowRight'||e.key==='d')keys.r=0;
 });
 $('go').addEventListener('click',()=>{if(paused)resumeGame();else startGame();});
+$('nm').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'){e.preventDefault();submitScore();}});
+$('nm').addEventListener('keyup',e=>e.stopPropagation());
+$('nmok').addEventListener('click',submitScore);
 $('sec').addEventListener('click',()=>{if(paused){paused=false;startGame();}else continueSaved();});
 $('pz').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();pauseGame();});
 window.addEventListener('keydown',e=>{if(e.key==='p'||e.key==='P'||e.key==='Escape'){if(paused)resumeGame();else pauseGame();}});
@@ -1192,8 +1267,9 @@ function frame(ts){
 }
 resize(); reset();
 $('best').textContent=S.best?('Best: '+S.best):'';
+renderLB(); refreshBoard();
 if(hasSave()){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY));if(d&&d.v===1){$('sec').textContent='CONTINUE · Wave '+d.S.wave;$('sec').style.display='inline-block';}}catch(e){}}
-window.__dbg={pauseGame,resumeGame,saveGame,loadGame,continueSaved,get paused(){return paused},S,M,player,throwBomb,setMega,spawnWave,hitMega,update,draw,startGame,reset,get enemies(){return enemies},get gates(){return gates},get bullets(){return bullets},get shells(){return shells},get flyBombs(){return flyBombs}};
+window.__dbg={gameOver,pauseGame,resumeGame,saveGame,loadGame,continueSaved,get paused(){return paused},S,M,player,throwBomb,setMega,spawnWave,hitMega,update,draw,startGame,reset,get enemies(){return enemies},get gates(){return gates},get bullets(){return bullets},get shells(){return shells},get flyBombs(){return flyBombs}};
 requestAnimationFrame(frame);
 })();
 </script>
