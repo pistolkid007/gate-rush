@@ -61,7 +61,7 @@
     <input id="nm" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="YOUR NAME">
     <button id="nmok">SAVE SCORE</button></div>
   <div id="lb"></div>
-  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1124c</div>
+  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1124d</div>
 </div></div>
 <button id="bomb" aria-label="Launch bomb" data-n="0">💣</button>
 <button id="snd" aria-label="Toggle sound">🔊</button>
@@ -175,7 +175,7 @@ function spawnWave(){
     if(add>0)floatText('🚀 ROCKETEERS',cx,H*0.5,'#ff9a5a',24);
   }
   if(w>=85&&(w-85)%8===0){
-    const bh2=Math.round(Math.max(40000+(w-85)*1500,30*(S.gun>=5?400:S.gun>=3?120:20)*rate()));
+    const bh2=Math.round(Math.max(30000+(w-85)*1500,30*(S.gun>=5?400:S.gun>=3?120:20)*rate()));
     enemies.push({x:0,d:50,hp:bh2,max:bh2,boss:true,brute:true,el:false,rad:2.2,seed:Math.random()*6.28,flash:0,dead:false});
     floatText('👹 BRUTE INCOMING',cx,H*0.37,'#ff6a4a',30); floatText('💣 BOMBS HURT HIM BADLY',cx,H*0.37+32,'#ffd27a',18); beep(70,0.8,'sawtooth',0.15,-20);
   }
@@ -731,11 +731,11 @@ function update(dt){
       else{
         e.sw=(e.sw||0)+dt;
         if(e.sw<1.4){ /* stalking: slow track */ e.x=clamp(e.x+clamp(player.x-e.x,-0.9*dt,0.9*dt),-2.5,2.5); e.ax=e.x; e.wind=0; }
-        else if(e.sw<2.3){ e.wind=(e.sw-1.4)/0.9; } /* windup: aim locked */
-        else if(e.sw<2.45){
-          if(!e.hit){ e.hit=true; if(playing&&Math.abs(player.x-e.ax)<2.5){
+        else if(e.sw<2.9){ e.wind=(e.sw-1.4)/1.5; } /* windup: aim locked */
+        else if(e.sw<3.05){
+          if(!e.hit){ e.hit=true; if(playing&&Math.abs(player.x-e.ax)<1.6){
             S.shake=1;S.hurt=1;beep(70,0.4,'sawtooth',0.2,-40);vib([80,40,160]);
-            if(S.hp>1){S.hp=1;floatText('🪓 AXE HIT · 1 HP!',cx,H*0.4,'#ff4a3a',30);} else {S.cause='axe';S.hijack=false;S.hp=0;gameOver();}
+            if(S.hp>1){S.hp=Math.max(1,Math.floor(S.hp/2));floatText('🪓 AXE HIT · HALF HP!',cx,H*0.4,'#ff4a3a',30);} else {S.cause='axe';S.hijack=false;S.hp=0;gameOver();}
           } else if(playing){floatText('DODGED',cx,H*0.45,'#7dffb0',22);} }
           e.wind=1;
         } else { e.sw=0; e.hit=false; e.wind=0; }
@@ -942,7 +942,7 @@ function drawBoss(e){
   const flash=e.flash>0, bob=Math.sin(T*3+e.seed)*r*0.03;
   if(e.brute&&e.wind>0){
     const pu=0.5+0.5*Math.sin(T*30);
-    quadH(e.ax-2.5,e.ax+2.5,0.6,e.d,0,'rgba(255,40,30,'+(0.18+0.25*e.wind*(0.6+0.4*pu))+')');
+    quadH(e.ax-1.6,e.ax+1.6,0.6,e.d,0,'rgba(255,40,30,'+(0.18+0.25*e.wind*(0.6+0.4*pu))+')');
     const sa=F/(F+e.d), ang=e.wind>=1?0.9:-1.2+e.wind*0.9; const ax=X+r*1.1, ay=Y-r*2.2;
     ctx.strokeStyle='#cfd6e0'; ctx.lineWidth=Math.max(3,r*0.14); ctx.lineCap='round';
     ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(ax+Math.sin(ang)*r*2.2,ay-Math.cos(ang)*r*2.2+(e.wind>=1?r*2:0)); ctx.stroke();
@@ -1443,7 +1443,7 @@ if(hasSave()){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY));if(d&&d.v==
 window.__dbg={boardSwipe,boardTap,get board(){return S.board},gameOver,pauseGame,resumeGame,saveGame,loadGame,continueSaved,get paused(){return paused},S,M,player,throwBomb,setMega,spawnWave,hitMega,update,draw,startGame,reset,get enemies(){return enemies},get gates(){return gates},get bullets(){return bullets},get shells(){return shells},get flyBombs(){return flyBombs}};
 requestAnimationFrame(frame);
 })();
-const BUILD='1124c';
+const BUILD='1124d';
 async function checkUpdate(){
   try{
     const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}); if(!r.ok)return;
