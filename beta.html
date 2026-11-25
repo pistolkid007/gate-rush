@@ -67,7 +67,7 @@
 <button id="snd" aria-label="Toggle sound">🔊</button>
 <button id="pz" aria-label="Pause" style="display:none">⏸</button>
 
-<script>window.__BETA_L=6000;
+<script>window.__BETA_L=6000;window.__BETA_W=84;
 (()=>{
 'use strict';
 const $=id=>document.getElementById(id);
@@ -166,18 +166,18 @@ function spawnWave(){
       hp:bhp,max:bhp,boss:true,el:false,rad:1.05,seed:Math.random()*6.28,flash:0,dead:false});
     floatText('BOSS INCOMING',cx,H*0.37,'#ffb36b',28);
   }
-  if(w>=75&&w%2===1){
-    const have=enemies.filter(e=>e.rkt&&!e.dead).length, add=Math.min(8-have,2+Math.floor((w-75)/20));
+  if(w>=80&&w%2===1){
+    const have=enemies.filter(e=>e.rkt&&!e.dead).length, add=Math.min(8-have,2+Math.floor((w-80)/20));
     for(let i=0;i<add;i++){
       const side=((have+i)&1)?1:-1, rh=Math.round(Math.max(500+(w-75)*45,6*(S.gun>=5?400:S.gun>=3?120:20)*rate()));
       enemies.push({x:side*rnd(2.4,3.6),d:46+i*3,hp:rh,max:rh,rkt:true,ft:rnd(0.5,1.5),vol:0,el:false,rad:0.8,seed:Math.random()*6.28,flash:0,dead:false});
     }
     if(add>0)floatText('🚀 ROCKETEERS',cx,H*0.5,'#ff9a5a',24);
   }
-  if(w>=75&&(w-75)%8===0){
-    const bh2=Math.round(Math.max(60000+(w-75)*1500,30*(S.gun>=5?400:S.gun>=3?120:20)*rate()));
+  if(w>=85&&(w-85)%8===0){
+    const bh2=Math.round(Math.max(40000+(w-85)*1500,30*(S.gun>=5?400:S.gun>=3?120:20)*rate()));
     enemies.push({x:0,d:50,hp:bh2,max:bh2,boss:true,brute:true,el:false,rad:2.2,seed:Math.random()*6.28,flash:0,dead:false});
-    floatText('👹 BRUTE INCOMING',cx,H*0.37,'#ff6a4a',30); beep(70,0.8,'sawtooth',0.15,-20);
+    floatText('👹 BRUTE INCOMING',cx,H*0.37,'#ff6a4a',30); floatText('💣 BOMBS HURT HIM BADLY',cx,H*0.37+32,'#ffd27a',18); beep(70,0.8,'sawtooth',0.15,-20);
   }
   if(w>=8){
     const cnt=Math.min(30,6+Math.floor((w-8)*1.2)), rhp=20+Math.floor((w-8)/5)*4;
@@ -186,7 +186,7 @@ function spawnWave(){
     if(w===8||w%5===0)floatText('⚡ FAST RUNNERS',cx,H*0.5,'#ffd84a',24);
   }
   if(w>=25&&(w-25)%6===0){
-    const na=1, sneak=w>=75, ahp=Math.round((400+(w-25)*25)*(1+S.level/1500));
+    const na=1, sneak=w>=80, ahp=Math.round((400+(w-25)*25)*(1+S.level/1500));
     for(let i=0;i<na;i++)enemies.push({x:(Math.random()<0.5?-1:1)*rnd(2.4,4.2),d:58+i*5,hp:sneak?1e12:ahp,max:ahp,assassin:true,sneak:sneak,el:false,rad:0.6,
       seed:Math.random()*6.28,flash:0,dead:false});
     floatText(sneak?'☠ SNEAK ASSASSIN':'☠ ASSASSIN INCOMING',cx,H*0.5,'#ff5a5a',28);
@@ -307,7 +307,7 @@ function continueSaved(){
 }
 function startGame(){
   initAudio(); reset(); S.mode='play'; paused=false; clearSave(); $('pz').style.display='block';
-  if(window.__BETA_L){S.level=window.__BETA_L;S.wave=74;}
+  if(window.__BETA_L){S.level=window.__BETA_L;S.wave=window.__BETA_W||74;}
   $('ov').classList.add('hide'); syncBomb();
 }
 function gameOver(){
@@ -435,7 +435,7 @@ function detonate(b){
   for(const e of enemies){
     if(e.dead||e.d>=82)continue;
     if(isBig(e)){
-      e.hp-=Math.max(1500,Math.round(e.max*0.6)); e.flash=0.3;
+      e.hp-=Math.max(1500,Math.round(e.max*(e.brute?0.4:0.6))); e.flash=0.3;
       if(e.hp<=0)killEnemy(e);
     }else killEnemy(e,(k++%4)===0);
   }
@@ -615,7 +615,7 @@ function update(dt){
     floatText('BOMBS UNLOCKED  💣 ×2',cx,H*0.46,'#ffb347',28);
     beep(160,0.4,'square',0.08,300);
   }
-  if(S.bombOn&&S.bombs<2){S.bombT+=dt;if(S.bombT>=20){S.bombs++;S.bombT=0;syncBomb();}}
+  if(S.bombOn&&S.bombs<2){S.bombT+=dt*(enemies.some(e=>e.brute&&!e.dead)?3:1);if(S.bombT>=20){S.bombs++;S.bombT=0;syncBomb();}}
   for(let i=flyBombs.length-1;i>=0;i--){
     const b=flyBombs[i]; b.d+=36*dt;
     if(b.d>=b.td){detonate(b);flyBombs.splice(i,1);}
@@ -680,7 +680,7 @@ function update(dt){
     }
   }
 
-  if(playing&&S.lz>=1&&S.wave>=75){
+  if(playing&&S.lz>=1&&S.wave>=80){
     S.droneT-=dt;
     if(S.droneT<=0){
       S.droneT=Math.max(3.2,6.5-(S.wave-75)*0.04);
