@@ -61,7 +61,7 @@
     <input id="nm" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="YOUR NAME">
     <button id="nmok">SAVE SCORE</button></div>
   <div id="lb"></div>
-  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1124b</div>
+  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1124c</div>
 </div></div>
 <button id="bomb" aria-label="Launch bomb" data-n="0">💣</button>
 <button id="snd" aria-label="Toggle sound">🔊</button>
@@ -1443,6 +1443,16 @@ if(hasSave()){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY));if(d&&d.v==
 window.__dbg={boardSwipe,boardTap,get board(){return S.board},gameOver,pauseGame,resumeGame,saveGame,loadGame,continueSaved,get paused(){return paused},S,M,player,throwBomb,setMega,spawnWave,hitMega,update,draw,startGame,reset,get enemies(){return enemies},get gates(){return gates},get bullets(){return bullets},get shells(){return shells},get flyBombs(){return flyBombs}};
 requestAnimationFrame(frame);
 })();
+const BUILD='1124c';
+async function checkUpdate(){
+  try{
+    const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}); if(!r.ok)return;
+    const m=(await r.text()).match(/const BUILD='([^']+)'/);
+    if(m&&m[1]!==BUILD&&(S.mode!=='play'||paused)){location.replace(location.pathname+'?v='+m[1]);}
+  }catch(e){}
+}
+checkUpdate(); document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate();});
+setInterval(()=>{if(S.mode!=='play')checkUpdate();},60000);
 </script>
 </body>
 </html>
