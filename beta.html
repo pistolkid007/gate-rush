@@ -68,7 +68,7 @@
     <input id="nm" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="YOUR NAME">
     <button id="nmok">SAVE SCORE</button></div>
   <div id="lb"></div>
-  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1126a</div>
+  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1126b</div>
 </div></div>
 <button id="bomb" aria-label="Launch bomb" data-n="0">💣</button>
 <button id="snd" aria-label="Toggle sound">🔊</button>
@@ -161,7 +161,7 @@ function newGate(){
 }
 function spawnWave(){
   S.wave++; const w=S.wave;
-  const rows=Z?Math.min(1+Math.floor((w-1)*2.6),60):Math.min(6+Math.floor(w*3),60), sc=w>=75?1+(w-75)*0.08:1, hp=Math.round((1+Math.floor(w*0.7))*sc*(Z?0.85*(1+w*0.4):1));
+  const rows=Z?Math.min(1+Math.floor((w-1)*(w<12?1.5:2.6)-(w<12?0:7.5)),60):Math.min(6+Math.floor(w*3),60), sc=w>=75?1+(w-75)*0.08:1, hp=Math.round((1+Math.floor(w*0.7))*sc*(Z?0.85*(1+w*0.4):1));
   const elP=w>=2?Math.min(0.04+w*0.01,0.18):0;
   for(let r=0;r<rows;r++){
     const cols=(r&1)?6:7;
@@ -346,16 +346,19 @@ function uiTitle(){
 const zTgt=w=>30+25*w+2*w*w;
 function spawnZGate(d){
   const w=Math.max(1,S.wave), N=Math.max(1,S.level), T0=zTgt(w), side=Math.random()<0.5?-1:1;
-  let n;
-  if(N>=4&&Math.random()<0.42)n=-Math.max(1,Math.min(N-1,Math.round(N*rnd(0.2,0.5))));
-  else if(N>T0*1.15)n=Math.max(1,Math.round(T0*0.02));
-  else n=Math.max(2,Math.round(Math.min(T0,N*2+10)*rnd(0.4,1.0)));
-  zg.push({d,side,n,done:false,flash:0});
+  const over=N>T0*1.15, pNeg=over?0.75:0.4;
+  let n,cap=0;
+  if(N>=4&&Math.random()<pNeg)n=-Math.max(1,Math.min(N-1,Math.round(N*rnd(0.2,0.45))));
+  else{
+    const base=over?Math.max(2,Math.round(T0*0.02)):Math.max(6,Math.round(Math.min(T0*0.2,N*0.8+8)*rnd(0.7,1.0)));
+    n=base; cap=Math.max(base+4,Math.round(base*2.5));
+  }
+  zg.push({d,side,n,f:n,cap,done:false,flash:0});
 }
 function zgHit(g,b){
-  const k=Math.max(1,Math.round(S.level/60));
-  g.n+=(b&&b.r?3:1)*k; if(g.n>0)g.n=Math.min(g.n,Math.max(12,Math.round(zTgt(Math.max(1,S.wave))*0.3))); g.flash=0.12;
-  if(g.n===0)g.n=1;
+  const wgt=12/Math.max(1,rate()*nb())*(b&&b.r?3:1);
+  g.f+=wgt; if(g.f>0&&g.cap)g.f=Math.min(g.f,g.cap); if(g.f>g.cap&&g.f>0&&!g.cap)g.f=Math.min(g.f,Math.max(6,g.n+8));
+  let n=Math.round(g.f); if(n===0)n=1; g.n=n; g.flash=0.12;
   beep(g.n>0?520:260,0.03,'square',0.025,40);
 }
 function updateZGates(dt,v,playing){
@@ -368,7 +371,7 @@ function updateZGates(dt,v,playing){
       const inLane=g.side<0?player.x<-0.15:player.x>0.15;
       if(inLane){
         const before=S.level, after=Math.max(0,before+g.n);
-        S.level=Math.max(0,Math.min(after,Math.max(before,Math.round(zTgt(S.wave)*1.3))));
+        S.level=after;
         const good=S.level>=before;
         floatText((good?'+':'')+(S.level-before)+' SOLDIERS',cx,H*0.55,good?'#7dffb0':'#ff6a5a',28);
         burst(scrX(player.x,0.9),scrY(0.9)-u,20,good?'#6fd0ff':'#ff5a4a',220,4);
@@ -471,8 +474,8 @@ function killEnemy(e,fx){
   e.dead=true; S.kills++; addDecal(e);
   const s=F/(F+e.d);
   if(isBig(e)){
-    const gain=Z?(e.brute?Math.max(20,Math.ceil(S.level*0.15)):Math.max(2,Math.ceil(S.level*0.04))):(e.assassin?6:e.charger?3:e.brute?20:2);
-    S.score+=(e.assassin?800:e.charger?500:400)+e.max; S.level=Z?Math.min(S.level+gain,Math.max(S.level,Math.round(zTgt(S.wave)*1.3))):S.level+gain; S.hp=Math.min(S.maxHp,S.hp+(e.assassin?8:e.charger?6:4)); S.shake=Math.max(S.shake,0.5);
+    const gain=Z?(e.brute?Math.max(20,Math.ceil(S.level*0.15)):Math.max(2,Math.ceil(S.level*0.02))):(e.assassin?6:e.charger?3:e.brute?20:2);
+    S.score+=(e.assassin?800:e.charger?500:400)+e.max; S.level+=gain; S.hp=Math.min(S.maxHp,S.hp+(e.assassin?8:e.charger?6:4)); S.shake=Math.max(S.shake,0.5);
     const X=scrX(e.x,e.d),Y=scrY(e.d)-u*s*1.5;
     burst(X,Y,45,e.assassin?'#a02bd1':e.charger?'#7a2bd1':'#c4162f',260,6); burst(X,Y,20,'#ffd53d',200,4);
     floatText((e.assassin?'ASSASSIN DOWN':e.charger?'CHARGER DOWN':e.rkt?'LAUNCHER DOWN':e.brute?'BRUTE DOWN':'BOSS DOWN')+' · +'+gain+(Z?' SURVIVORS':' FIREPOWER'),cx,H*0.42,'#ffd27a',22);
@@ -1605,7 +1608,7 @@ applyMode(Z); resize(); reset();
 refreshBoard();
 window.__dbg={get zg(){return zg},applyMode,get Z(){return Z},boardSwipe,boardTap,get board(){return S.board},gameOver,pauseGame,resumeGame,saveGame,loadGame,continueSaved,get paused(){return paused},S,M,player,throwBomb,setMega,spawnWave,hitMega,update,draw,startGame,reset,get enemies(){return enemies},get gates(){return gates},get bullets(){return bullets},get shells(){return shells},get flyBombs(){return flyBombs}};
 requestAnimationFrame(frame);
-const BUILD='1126a';
+const BUILD='1126b';
 async function checkUpdate(){
   try{
     const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}); if(!r.ok)return;
