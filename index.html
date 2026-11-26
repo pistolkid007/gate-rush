@@ -51,6 +51,65 @@
   #sec{margin-top:10px;padding:12px 22px;border-radius:12px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;font-size:16px;font-weight:700}
   #snd{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:5;width:40px;height:40px;
     border-radius:20px;border:0;background:rgba(0,0,0,.35);color:#fff;font-size:18px;touch-action:manipulation}
+#pw h1{font-size:22px;margin:0;letter-spacing:-.3px}
+#pw .top{display:flex;align-items:center;justify-content:space-between}
+#pw .snd{display:flex;gap:6px;align-items:center}
+#pw .snd button{padding:6px 9px;font-size:16px;line-height:1}
+#pw .snd button.off{opacity:.4}
+#pw .lives{font-size:19px;letter-spacing:1px;white-space:nowrap}
+#pw .heart.lost{filter:grayscale(1);opacity:.3}
+#pw .cell.oops::after{content:"";position:absolute;inset:0;background:rgba(220,38,38,.75);pointer-events:none}
+#pw #pw_board.shake{animation:pwshake .38s}
+@keyframes pwshake{0%,100%{transform:none}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(4px)}}
+#pw .timer{font-variant-numeric:tabular-nums;font-weight:700;font-size:18px;color:var(--mut)}
+#pw .bar{display:flex;align-items:center;justify-content:space-between;margin:12px 0}
+#pw .lvl{display:flex;align-items:center;gap:6px;font-weight:700;font-size:17px}
+#pw .lvl small{font-weight:600;color:var(--mut);margin-left:2px}
+#pw button{font:inherit;color:var(--ink);border:0;background:var(--card);border-radius:12px;padding:10px 13px;box-shadow:0 1px 0 rgba(0,0,0,.14);touch-action:manipulation;cursor:pointer}
+#pw button:active{transform:scale(.97)}
+#pw button:disabled{opacity:.35}
+#pw button.primary{background:#1d1d1f;color:#fff}
+#pw button.on{background:#1d1d1f;color:#fff}
+#pw .arrow{padding:6px 12px;font-size:20px;line-height:1}
+#pw #pw_board{display:grid;width:100%;aspect-ratio:1/1;border:3px solid #1d1d1f;border-radius:8px;overflow:hidden;user-select:none;-webkit-user-select:none;touch-action:manipulation;background:#fff;transition:opacity .15s}
+#pw #pw_board.loading{opacity:.35}
+#pw .cell{position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden}
+#pw .cell span{line-height:1;pointer-events:none}
+#pw .cell .cat{font-size:calc(var(--u)*.68)}
+#pw .cell .x{font-size:calc(var(--u)*.5);font-weight:700;opacity:.8}
+#pw .cell.bad::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(220,38,38,.6) 0 4px,transparent 4px 9px);pointer-events:none}
+#pw .cell.flash{animation:pwfl .8s}
+@keyframes pwfl{0%,60%{box-shadow:inset 0 0 0 4px #fff}100%{box-shadow:none}}
+#pw .won .cell .cat{animation:pwhop .6s ease both}
+@keyframes pwhop{0%{transform:scale(1)}40%{transform:scale(1.35) rotate(-8deg)}100%{transform:scale(1)}}
+#pw .tools{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px}
+#pw .tools button{padding:11px 4px;font-size:15px}
+#pw .help{margin-top:14px;background:rgba(255,255,255,.65);border-radius:12px;padding:10px 12px;font-size:14px;color:#3a3a3d}
+#pw .help b{color:var(--ink)}
+#pw .sheet{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:18px;z-index:10}
+#pw .sheet[hidden]{display:none}
+#pw .card{background:var(--card);border-radius:20px;padding:20px;width:100%;max-width:400px;max-height:85vh;overflow:auto;text-align:center}
+#pw .card h2{margin:0 0 6px;font-size:24px}
+#pw .card p{margin:4px 0 14px;color:var(--mut)}
+#pw .row{display:flex;gap:10px;justify-content:center}
+#pw .picker{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}
+#pw .picker button{padding:10px 0;font-weight:700;position:relative}
+#pw .picker button.cur{background:#1d1d1f;color:#fff}
+#pw .picker button.done::after{content:"✓";position:absolute;top:1px;right:5px;font-size:11px;color:#1f9d55}
+#pw .picker .grp{grid-column:1/-1;text-align:left;font-size:13px;font-weight:700;color:var(--mut);margin-top:6px}
+  #pw{--bg:#f4efe6;--ink:#1d1d1f;--mut:#6b6b70;--card:#fff;position:fixed;inset:0;z-index:20;display:none;background:#f4efe6;color:#1d1d1f;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;touch-action:pan-y;justify-content:center;font:16px/1.35 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    padding-top:env(safe-area-inset-top,0px);box-sizing:border-box}
+  #pw.open{display:flex}
+  #pw *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  #pw .app{width:100%;max-width:520px;padding:14px 12px calc(28px + env(safe-area-inset-bottom,0px));margin:0 auto}
+  #pw h1{font-size:22px;margin:0;letter-spacing:-.3px;color:#1d1d1f;-webkit-text-stroke:0;paint-order:normal;text-shadow:none;line-height:1.2;font-weight:700}
+  #pw .card{width:100%;max-width:400px;color:#1d1d1f;text-align:center}
+  #pw .card h2{color:#1d1d1f}
+  #pw .tl{display:flex;align-items:center;gap:8px}
+  #pw #pw_exit{padding:6px 10px;font-size:15px;font-weight:700}
+  #pw button{font-family:inherit}
+  #cm{margin-top:10px;padding:12px 22px;border-radius:12px;border:1px solid rgba(255,190,220,.55);background:rgba(244,143,177,.2);color:#ffe1ee;font-size:16px;font-weight:800}
 </style>
 </head>
 <body>
@@ -64,11 +123,72 @@
   <button id="go">PLAY</button>
   <button id="sec" style="display:none"></button>
   <button id="zm"></button>
+  <button id="cm">🐱 PLAY CAT PUZZLE</button>
   <div id="nameBox" style="display:none"><div class="nbt">NEW HIGH SCORE! Enter name or initials</div>
     <input id="nm" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="YOUR NAME">
     <button id="nmok">SAVE SCORE</button></div>
   <div id="lb"></div>
-  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1125c</div>
+  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1126a</div>
+</div></div>
+<div id="pw"><div class="app">
+  <div class="top">
+    <div class="tl"><button id="pw_exit" aria-label="Back to Gate Rush">‹ Back</button><h1>🐾 Pawsitions</h1></div>
+    <div class="snd"><button id="pw_mus" aria-label="Music">🎵</button><button id="pw_sfx" aria-label="Sound effects">🔊</button><div class="timer" id="pw_timer" style="margin-left:6px">0:00</div></div>
+  </div>
+  <div class="bar">
+    <div class="lvl">
+      <button class="arrow" id="pw_prev" aria-label="Previous level">‹</button>
+      <span id="pw_lvltxt">Level 1</span><small id="pw_sizetxt"></small>
+      <button class="arrow" id="pw_next" aria-label="Next level">›</button>
+    </div>
+    <div class="lives" id="pw_lives"></div>
+    <button id="pw_levels" aria-label="Levels">☰</button>
+  </div>
+
+  <div id="pw_board" class="loading"></div>
+
+  <div class="tools">
+    <button id="pw_undo">↶ Undo</button>
+    <button id="pw_hint">💡 Hint</button>
+    <button id="pw_reset">⟲ Clear</button>
+    <button id="pw_auto">Auto ✕</button>
+  </div>
+
+  <div class="help">
+    <b>Rules:</b> one 🐱 in every row, every column and every color. Cats can't touch, even diagonally.
+    Tap a square once for ✕ (ruled out), twice for 🐱, three times to clear. Every puzzle has exactly one answer. <b>Place a cat in the wrong spot and you lose a ❤️. Lose all 3 and the level is over.</b>
+  </div>
+</div>
+
+<div class="sheet" id="pw_win" hidden>
+  <div class="card">
+    <h2>Solved! 🐱</h2>
+    <p id="pw_wintxt"></p>
+    <div class="row">
+      <button id="pw_replay">Replay</button>
+      <button class="primary" id="pw_nextlvl">Next level →</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet" id="pw_over" hidden>
+  <div class="card">
+    <h2>Out of lives 💔</h2>
+    <p>Three wrong guesses and you're done. Every puzzle can be solved by logic alone, no guessing needed.</p>
+    <div class="row">
+      <button id="pw_levels2">Levels</button>
+      <button class="primary" id="pw_retry">Try again</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet" id="pw_pick" hidden>
+  <div class="card">
+    <h2>Levels</h2>
+    <p>Grid size grows every 2 levels, up to 10×10.</p>
+    <div class="picker" id="pw_picker"></div>
+    <div class="row" style="margin-top:14px"><button id="pw_closepick">Close</button></div>
+  </div>
 </div></div>
 <button id="bomb" aria-label="Launch bomb" data-n="0">💣</button>
 <button id="snd" aria-label="Toggle sound">🔊</button>
@@ -303,7 +423,7 @@ function showOv(title,stats,goTxt,secTxt){
   $('ttl').textContent=title; $('sub').style.display='none';
   const st=$('stats'); st.style.display=stats?'block':'none'; st.innerHTML=stats||'';
   $('nameBox').style.display='none'; renderLB(); $('go').textContent=goTxt; const sc=$('sec'); sc.style.display=secTxt?'inline-block':'none'; sc.textContent=secTxt||'';
-  $('zm').style.display=(title==='PAUSED')?'none':'inline-block'; $('ov').classList.remove('hide');
+  $('zm').style.display=(title==='PAUSED')?'none':'inline-block'; $('cm').style.display=(title==='PAUSED')?'none':'inline-block'; $('ov').classList.remove('hide');
 }
 function pauseGame(){
   if(S.mode!=='play'||paused)return;
@@ -335,7 +455,7 @@ function uiTitle(){
   $('sub').innerHTML=Z?'The dead are marching. Start with one soldier.<br>Shoot the gates to raise them, then run through the good ones.':'Shoot the blue gates to power up.<br>Crack the steel gate. Hold the line.';
   $('sub').style.display='block'; $('stats').style.display='none';
   $('go').textContent=Z?'PLAY ZOMBIES':'PLAY';
-  $('zm').textContent=Z?'🎯 PLAY GATE RUSH':'🧟 PLAY ZOMBIES'; $('zm').style.display='inline-block';
+  $('zm').textContent=Z?'🎯 PLAY GATE RUSH':'🧟 PLAY ZOMBIES'; $('zm').style.display='inline-block'; $('cm').style.display='inline-block';
   $('best').textContent=S.best?('Best: '+S.best):'';
   const sc=$('sec'); sc.style.display='none';
   if(hasSave()){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY));if(d&&d.v===1){sc.textContent='CONTINUE · Wave '+d.S.wave;sc.style.display='inline-block';}}catch(e){}}
@@ -1559,6 +1679,7 @@ window.addEventListener('keyup',e=>{
   if(e.key==='ArrowLeft'||e.key==='a')keys.l=0; if(e.key==='ArrowRight'||e.key==='d')keys.r=0;
 });
 $('go').addEventListener('click',()=>{if(paused)resumeGame();else startGame();});
+$('cm').addEventListener('click',()=>{if(paused||!window.__pwOpenFn)return;window.__pwOpenFn()});
 $('zm').addEventListener('click',()=>{if(paused)return;applyMode(!Z);refreshBoard();startGame();});
 $('nm').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'){e.preventDefault();submitScore();}});
 $('nm').addEventListener('keyup',e=>e.stopPropagation());
@@ -1576,6 +1697,7 @@ window.addEventListener('resize',resize);
 /* ---------- loop ---------- */
 let last=0,saveT=0;
 function frame(ts){
+  if(window.__pwOpen){last=0;requestAnimationFrame(frame);return}
   const dt=Math.min(0.05,Math.max(0,(ts-last)/1000)||0.016); last=ts;
   if(!paused){update(dt); saveT+=dt; if(saveT>4){saveT=0;saveGame();}} draw();
   requestAnimationFrame(frame);
@@ -1583,18 +1705,606 @@ function frame(ts){
 try{Z=localStorage.getItem('gaterush.mode')==='z';}catch(e){}
 applyMode(Z); resize(); reset();
 refreshBoard();
+window.__pwRestoreTheme=()=>{try{document.querySelector('meta[name=theme-color]').setAttribute('content',Z?'#232a21':'#143d52')}catch(e){}};
 window.__dbg={get zg(){return zg},applyMode,get Z(){return Z},boardSwipe,boardTap,get board(){return S.board},gameOver,pauseGame,resumeGame,saveGame,loadGame,continueSaved,get paused(){return paused},S,M,player,throwBomb,setMega,spawnWave,hitMega,update,draw,startGame,reset,get enemies(){return enemies},get gates(){return gates},get bullets(){return bullets},get shells(){return shells},get flyBombs(){return flyBombs}};
 requestAnimationFrame(frame);
-const BUILD='1125c';
+const BUILD='1126a';
 async function checkUpdate(){
   try{
     const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}); if(!r.ok)return;
     const m=(await r.text()).match(/const BUILD='([^']+)'/);
-    if(m&&m[1]!==BUILD&&(S.mode!=='play'||paused)){location.replace(location.pathname+'?v='+m[1]);}
+    if(m&&m[1]!==BUILD&&!window.__pwOpen&&(S.mode!=='play'||paused)){location.replace(location.pathname+'?v='+m[1]);}
   }catch(e){}
 }
 checkUpdate(); document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate();});
 setInterval(()=>{if(S.mode!=='play')checkUpdate();},60000);
+})();
+</script>
+<script>
+(()=>{
+
+// ==ENGINE==
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function shuffle(arr,rnd){for(let i=arr.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr}
+function sizeFor(level){return Math.min(5+Math.floor((level-1)/2),10)}
+
+// A valid cat layout: one per row and column, no two touching (diagonals included).
+function randomPlacement(n,rnd){
+  const cols=new Array(n),used=new Array(n).fill(false);
+  function go(r){
+    if(r===n)return true;
+    const order=shuffle([...Array(n).keys()],rnd);
+    for(const c of order){
+      if(used[c])continue;
+      if(r>0&&Math.abs(cols[r-1]-c)<=1)continue;
+      used[c]=true;cols[r]=c;
+      if(go(r+1))return true;
+      used[c]=false;
+    }
+    return false;
+  }
+  go(0);return cols;
+}
+
+// Grow one color region outward from each cat until the grid is full.
+function growRegions(n,cols,rnd){
+  const reg=Array.from({length:n},()=>new Array(n).fill(-1));
+  cols.forEach((c,r)=>{reg[r][c]=r});
+  let remaining=n*n-n;
+  const D=[[1,0],[-1,0],[0,1],[0,-1]];
+  while(remaining>0){
+    const cand=[];
+    for(let r=0;r<n;r++)for(let c=0;c<n;c++){
+      if(reg[r][c]!==-1)continue;
+      for(const[dr,dc]of D){
+        const a=r+dr,b=c+dc;
+        if(a>=0&&b>=0&&a<n&&b<n&&reg[a][b]!==-1){cand.push([r,c,reg[a][b]])}
+      }
+    }
+    const[r,c,g]=cand[Math.floor(rnd()*cand.length)];
+    reg[r][c]=g;remaining--;
+  }
+  return reg;
+}
+
+// Counts solutions (stops at `limit`). Rows top to bottom.
+function solve(n,reg,limit){
+  const colUsed=new Array(n).fill(false),regUsed=new Array(n).fill(false),cols=new Array(n);
+  let count=0,first=null;const all=[];
+  function go(r){
+    if(count>=limit)return;
+    if(r===n){count++;all.push(cols.slice());if(!first)first=cols.slice();return}
+    for(let c=0;c<n;c++){
+      if(colUsed[c])continue;
+      const g=reg[r][c];if(regUsed[g])continue;
+      if(r>0&&Math.abs(cols[r-1]-c)<=1)continue;
+      colUsed[c]=regUsed[g]=true;cols[r]=c;
+      go(r+1);
+      colUsed[c]=regUsed[g]=false;
+    }
+  }
+  go(0);return{count,first,all};
+}
+
+function regionConnected(n,reg,A){
+  let start=null,total=0;
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(reg[r][c]===A){total++;if(!start)start=[r,c]}
+  if(!start)return false;
+  const seen=new Set([start[0]*n+start[1]]),st=[start];
+  while(st.length){
+    const[r,c]=st.pop();
+    for(const[dr,dc]of[[1,0],[-1,0],[0,1],[0,-1]]){
+      const a=r+dr,b=c+dc;
+      if(a<0||b<0||a>=n||b>=n||reg[a][b]!==A||seen.has(a*n+b))continue;
+      seen.add(a*n+b);st.push([a,b]);
+    }
+  }
+  return seen.size===total;
+}
+
+// Nudge region borders until the intended cat layout is the only solution.
+function makeUnique(n,cols,reg,rnd){
+  for(let it=0;it<600;it++){
+    const sols=solve(n,reg,2).all;
+    if(sols.length===1)return true;
+    const alt=sols.find(s=>s.some((c,r)=>c!==cols[r]));
+    const cells=[];
+    for(let r=0;r<n;r++)if(alt[r]!==cols[r])cells.push([r,alt[r]]);
+    shuffle(cells,rnd);
+    let done=false;
+    for(const[r,c]of cells){
+      const A=reg[r][c],nb=[];
+      for(const[dr,dc]of[[1,0],[-1,0],[0,1],[0,-1]]){
+        const a=r+dr,b=c+dc;
+        if(a>=0&&b>=0&&a<n&&b<n&&reg[a][b]!==A)nb.push(reg[a][b]);
+      }
+      shuffle(nb,rnd);
+      for(const B of nb){
+        reg[r][c]=B;
+        if(regionConnected(n,reg,A)){done=true;break}
+        reg[r][c]=A;
+      }
+      if(done)break;
+    }
+    if(!done)return false;
+  }
+  return false;
+}
+
+function combos(arr,k){
+  const out=[];
+  (function rec(s,cur){
+    if(cur.length===k){out.push(cur.slice());return}
+    for(let i=s;i<arr.length;i++){cur.push(arr[i]);rec(i+1,cur);cur.pop()}
+  })(0,[]);
+  return out;
+}
+
+// Human-style solver: how much deduction does the puzzle demand? Higher = harder.
+function logicScore(n,reg,maxK){
+  maxK=maxK||3;
+  const cand=Array.from({length:n},()=>new Array(n).fill(true));
+  const rowDone=new Array(n).fill(false),colDone=new Array(n).fill(false),regDone=new Array(n).fill(false);
+  let placed=0,score=0;
+  function place(r,c){
+    const g=reg[r][c];
+    rowDone[r]=colDone[c]=regDone[g]=true;placed++;
+    for(let i=0;i<n;i++)for(let j=0;j<n;j++){
+      if(i===r||j===c||reg[i][j]===g||(Math.abs(i-r)<=1&&Math.abs(j-c)<=1))cand[i][j]=false;
+    }
+  }
+  function singles(){
+    let ch=false;
+    for(let r=0;r<n;r++){
+      if(rowDone[r])continue;
+      const l=[];for(let c=0;c<n;c++)if(cand[r][c])l.push(c);
+      if(l.length===1){place(r,l[0]);ch=true}
+    }
+    for(let c=0;c<n;c++){
+      if(colDone[c])continue;
+      const l=[];for(let r=0;r<n;r++)if(cand[r][c])l.push(r);
+      if(l.length===1){place(l[0],c);ch=true}
+    }
+    for(let g=0;g<n;g++){
+      if(regDone[g])continue;
+      const l=[];for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(cand[r][c]&&reg[r][c]===g)l.push([r,c]);
+      if(l.length===1){place(l[0][0],l[0][1]);ch=true}
+    }
+    return ch;
+  }
+  // k regions living inside k lines (rows or cols) -> clear those lines elsewhere,
+  // and the reverse: k lines living inside k regions -> clear those regions elsewhere.
+  function advanced(k){
+    for(const type of[0,1]){
+      const line=(r,c)=>type===0?r:c;
+      const activeRegs=[],activeLines=[];
+      for(let g=0;g<n;g++)if(!regDone[g])activeRegs.push(g);
+      for(let l=0;l<n;l++)if(!(type===0?rowDone[l]:colDone[l]))activeLines.push(l);
+      if(activeRegs.length<=k)continue;
+      for(const S of combos(activeRegs,k)){
+        const ls=new Set(),inS=new Set(S);
+        for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(cand[r][c]&&inS.has(reg[r][c]))ls.add(line(r,c));
+        if(ls.size!==k)continue;
+        let ch=false;
+        for(let r=0;r<n;r++)for(let c=0;c<n;c++)
+          if(cand[r][c]&&ls.has(line(r,c))&&!inS.has(reg[r][c])){cand[r][c]=false;ch=true}
+        if(ch)return true;
+      }
+      for(const L of combos(activeLines,k)){
+        const rs=new Set(),inL=new Set(L);
+        for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(cand[r][c]&&inL.has(line(r,c)))rs.add(reg[r][c]);
+        if(rs.size!==k)continue;
+        let ch=false;
+        for(let r=0;r<n;r++)for(let c=0;c<n;c++)
+          if(cand[r][c]&&rs.has(reg[r][c])&&!inL.has(line(r,c))){cand[r][c]=false;ch=true}
+        if(ch)return true;
+      }
+    }
+    return false;
+  }
+  let guard=0;
+  while(placed<n&&guard++<500){
+    if(singles())continue;
+    let ok=false;
+    for(let k=1;k<=maxK&&!ok;k++){if(advanced(k)){score+=k;ok=true}}
+    if(!ok)break;
+  }
+  return placed===n?score:1000+(n-placed)*10+score;
+}
+
+// Same level number always gives the same puzzle.
+function makePuzzle(level,nOverride){
+  const n=nOverride||sizeFor(level);
+  const pos=(level-1)%2;
+  const capped=level>=11;
+  const pct=capped?1:[0.15,0.85][pos];
+  const K=n>=10?5:n>=9?8:10;
+  // Deduction depth allowed: 1 = 'this color is stuck in one row/col' only; 2 adds pairs; 3 adds triples.
+  const maxK=level<=6?1:level<=12?2:3;
+  // Cap on total deduction steps early on, so the first levels are gentle: 0 = every move is forced by simple elimination.
+  const capScore=level<=2?0:level<=4?1:level<=6?2:level<=8?3:level<=10?5:99;
+  const rnd=mulberry32(level*7919+104729+n);
+  const cands=[];let tries=0;
+  // only keep puzzles a person can finish by pure deduction (no guessing needed)
+  for(let pass=0;pass<2&&!cands.length;pass++){
+    const cap=pass===0?1200:300;tries=0;
+    while(cands.length<K&&tries<cap){
+      tries++;
+      const cols=randomPlacement(n,rnd);
+      const reg=growRegions(n,cols,rnd);
+      if(!makeUnique(n,cols,reg,rnd))continue;
+      const sc=logicScore(n,reg,maxK);
+      if(pass===0&&(sc>=1000||sc>capScore))continue;
+      cands.push({n,reg,sol:cols,score:sc});
+    }
+  }
+  if(!cands.length)return makePuzzle(level,n-1);
+  cands.sort((a,b)=>a.score-b.score);
+  const p=cands[Math.floor(pct*(cands.length-1))];
+  // shuffle which color each region gets
+  const perm=shuffle([...Array(n).keys()],rnd);
+  p.reg=p.reg.map(row=>row.map(g=>perm[g]));
+  return p;
+}
+// ==/ENGINE==
+
+// ================= UI =================
+const COLORS=['#ffd84d','#2ec4c6','#5bb8f5','#b5764f','#ff9b4a','#a8e890','#f48fb1','#b39ddb','#cfd3d8','#ef7b72'];
+const $=s=>document.querySelector(s);
+let save={level:1,solved:{},auto:false};
+try{const s=JSON.parse(localStorage.getItem('pawsitions-v1')||'null');if(s)save=Object.assign(save,s)}catch(e){}
+function persist(){try{localStorage.setItem('pawsitions-v1',JSON.stringify(save))}catch(e){}}
+
+const boardEl=$('#pw_board');
+let G=null,cells=[],timerId=null;
+
+function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function tick(){if(G&&G.started&&!G.won){G.elapsed=Math.floor((Date.now()-G.t0)/1000);$('#pw_timer').textContent=fmt(G.elapsed)}}
+function startTimer(){if(G.started)return;G.started=true;G.t0=Date.now();clearInterval(timerId);timerId=setInterval(tick,500)}
+
+// Puzzles are built in a background worker so big grids never freeze the screen; next level is prefetched.
+let worker=null;const cache={},waiting={},asked={};let loadToken=0;
+function resolveLevel(level,p){cache[level]=p;const w=waiting[level]||[];delete waiting[level];w.forEach(f=>f(p))}
+function syncFallback(){worker=null;Object.keys(waiting).forEach(l=>setTimeout(()=>resolveLevel(+l,makePuzzle(+l)),30))}
+try{
+  const src=[mulberry32,shuffle,sizeFor,randomPlacement,growRegions,solve,regionConnected,makeUnique,combos,logicScore,makePuzzle].map(f=>f.toString()).join('\n')+
+    '\nonmessage=function(e){postMessage({level:e.data,p:makePuzzle(e.data)})};';
+  worker=new Worker(URL.createObjectURL(new Blob([src],{type:'text/javascript'})));
+  worker.onmessage=e=>resolveLevel(e.data.level,e.data.p);
+  worker.onerror=()=>syncFallback();
+}catch(e){worker=null}
+function getPuzzle(level,cb){
+  if(cache[level]){cb(cache[level]);return}
+  (waiting[level]=waiting[level]||[]).push(cb);
+  if(asked[level])return;asked[level]=true;
+  if(worker)worker.postMessage(level);else setTimeout(()=>resolveLevel(level,makePuzzle(level)),30);
+}
+const busy=()=>!G||G.won||G.over||boardEl.classList.contains('loading');
+
+function renderLives(){
+  $('#pw_lives').innerHTML=Array.from({length:3},(_,i)=>'<span class="heart'+(i<G.lives?'':' lost')+'">❤️</span>').join('');
+}
+
+function loadLevel(level){
+  level=Math.max(1,level);
+  Snd.release();
+  clearInterval(timerId);
+  $('#pw_win').hidden=true;$('#pw_over').hidden=true;
+  boardEl.className='loading';
+  $('#pw_lvltxt').textContent='Level '+level;
+  $('#pw_sizetxt').textContent='building…';
+  $('#pw_timer').textContent='0:00';
+  $('#pw_prev').disabled=level<=1;
+  const token=++loadToken;
+  getPuzzle(level,p=>{
+    if(token!==loadToken)return;
+    G={level,n:p.n,reg:p.reg,sol:p.sol,board:Array.from({length:p.n},()=>new Array(p.n).fill(0)),hist:[],started:false,t0:0,elapsed:0,hints:0,won:false,over:false,lives:3,wrong:new Set()};
+    save.level=level;persist();
+    build();render();renderLives();
+    boardEl.className='';
+    $('#pw_sizetxt').textContent=p.n+'×'+p.n;
+    getPuzzle(level+1,()=>{});
+  });
+}
+
+function build(){
+  const n=G.n;
+  boardEl.innerHTML='';cells=[];
+  boardEl.style.gridTemplateColumns='repeat('+n+',1fr)';
+  const thin='1px solid rgba(0,0,0,.28)',thick='3px solid #1d1d1f';
+  for(let r=0;r<n;r++)for(let c=0;c<n;c++){
+    const el=document.createElement('div');
+    el.className='cell';
+    el.style.background=COLORS[G.reg[r][c]];
+    el.style.borderRight=c<n-1?(G.reg[r][c]!==G.reg[r][c+1]?thick:thin):'0';
+    el.style.borderBottom=r<n-1?(G.reg[r][c]!==G.reg[r+1][c]?thick:thin):'0';
+    el.appendChild(document.createElement('span'));
+    el.addEventListener('click',()=>tap(r,c));
+    boardEl.appendChild(el);cells.push(el);
+  }
+  sizeUnits();
+}
+function sizeUnits(){
+  if(!G)return;
+  boardEl.style.setProperty('--u',(boardEl.clientWidth-6)/G.n+'px');
+}
+window.addEventListener('resize',sizeUnits);
+
+function conflicts(){
+  const cats=[];
+  for(let r=0;r<G.n;r++)for(let c=0;c<G.n;c++)if(G.board[r][c]===2)cats.push([r,c]);
+  const bad=new Set();
+  for(let i=0;i<cats.length;i++)for(let j=i+1;j<cats.length;j++){
+    const[a,b]=cats[i],[x,y]=cats[j];
+    if(a===x||b===y||G.reg[a][b]===G.reg[x][y]||(Math.abs(a-x)<=1&&Math.abs(b-y)<=1)){bad.add(a*G.n+b);bad.add(x*G.n+y)}
+  }
+  return{bad,count:cats.length};
+}
+
+function render(){
+  const{bad}=conflicts();
+  for(let r=0;r<G.n;r++)for(let c=0;c<G.n;c++){
+    const v=G.board[r][c],el=cells[r*G.n+c],sp=el.firstChild;
+    sp.className=v===2?'cat':v===1?'x':'';
+    sp.textContent=v===2?'🐱':v===1?'✕':'';
+    el.classList.toggle('bad',bad.has(r*G.n+c));
+  }
+  $('#pw_undo').disabled=!G.hist.length||G.won||G.over;
+  $('#pw_hint').disabled=G.won||G.over;
+  $('#pw_auto').classList.toggle('on',!!save.auto);
+}
+
+function snap(){G.hist.push(G.board.map(r=>r.slice()));if(G.hist.length>300)G.hist.shift()}
+
+function autoMark(r,c){
+  const g=G.reg[r][c];
+  for(let i=0;i<G.n;i++)for(let j=0;j<G.n;j++){
+    if(G.board[i][j]!==0)continue;
+    if(i===r||j===c||G.reg[i][j]===g||(Math.abs(i-r)<=1&&Math.abs(j-c)<=1))G.board[i][j]=1;
+  }
+}
+
+function tap(r,c){
+  if(busy())return;
+  startTimer();
+  const idx=r*G.n+c,g=G;
+  let v=(G.board[r][c]+1)%3;
+  if(v===2&&G.wrong.has(idx))v=0; // already proven wrong: skip the cat state
+  if(v!==2){snap();G.board[r][c]=v;render();Snd.sfx(v===1?'x':'clear');return}
+  if(G.sol[r]===c){ // correct
+    snap();G.board[r][c]=2;
+    if(save.auto)autoMark(r,c);
+    render();Snd.sfx('cat');checkWin();return;
+  }
+  // wrong guess: lose a life, flash red, mark the cell ✕
+  G.lives--;G.wrong.add(idx);
+  G.board[r][c]=2;render();renderLives();
+  cells[idx].classList.add('oops');
+  boardEl.classList.remove('shake');void boardEl.offsetWidth;boardEl.classList.add('shake');
+  Snd.sfx('buzz');
+  if(G.lives<=0){G.over=true;clearInterval(timerId)}
+  setTimeout(()=>{
+    if(G!==g)return;
+    g.board[r][c]=1;cells[idx].classList.remove('oops');render();
+    if(g.over)gameOver();
+  },450);
+}
+
+function gameOver(){
+  Snd.hold();Snd.sfx('lose');
+  setTimeout(()=>{if(G&&G.over)$('#pw_over').hidden=false},300);
+}
+
+function checkWin(){
+  const{bad,count}=conflicts();
+  if(count===G.n&&bad.size===0)win();
+}
+
+function win(){
+  Snd.win();
+  G.won=true;tick();clearInterval(timerId);
+  boardEl.classList.add('won');
+  const prev=save.solved[G.level];
+  const best=(prev==null||G.elapsed<prev)?G.elapsed:prev;
+  save.solved[G.level]=best;persist();
+  const nextN=sizeFor(G.level+1);
+  let t='Time '+fmt(G.elapsed)+' · '+G.lives+'/3 ❤️'+(G.hints?' · '+G.hints+' hint'+(G.hints>1?'s':''):' · no hints');
+  if(prev!=null)t+=' · best '+fmt(best);
+  if(nextN>G.n)t+='\nNext up: '+nextN+'×'+nextN+' grid.';
+  $('#pw_wintxt').style.whiteSpace='pre-line';
+  $('#pw_wintxt').textContent=t;
+  render();
+  setTimeout(()=>{$('#pw_win').hidden=false},700);
+}
+
+$('#pw_undo').onclick=()=>{if(busy()||!G.hist.length)return;G.board=G.hist.pop();render();Snd.sfx('undo')};
+$('#pw_reset').onclick=()=>{if(busy())return;snap();G.board=G.board.map(r=>r.map(()=>0));render()};
+$('#pw_auto').onclick=()=>{save.auto=!save.auto;persist();render()};
+$('#pw_hint').onclick=()=>{
+  if(busy())return;
+  let row=-1;
+  for(let r=0;r<G.n;r++)if(G.board[r][G.sol[r]]!==2){row=r;break}
+  if(row<0)return;
+  startTimer();snap();
+  for(let c=0;c<G.n;c++)if(G.board[row][c]===2)G.board[row][c]=0;
+  G.board[row][G.sol[row]]=2;
+  if(save.auto)autoMark(row,G.sol[row]);
+  G.hints++;
+  render();Snd.sfx('hint');
+  const el=cells[row*G.n+G.sol[row]];el.classList.remove('flash');void el.offsetWidth;el.classList.add('flash');
+  checkWin();
+};
+$('#pw_prev').onclick=()=>loadLevel(G.level-1);
+$('#pw_next').onclick=()=>loadLevel(G.level+1);
+$('#pw_replay').onclick=()=>loadLevel(G.level);
+$('#pw_retry').onclick=()=>loadLevel(G.level);
+$('#pw_levels2').onclick=()=>{$('#pw_over').hidden=true;openPicker()};
+$('#pw_nextlvl').onclick=()=>loadLevel(G.level+1);
+
+function openPicker(){
+  const p=$('#pw_picker');p.innerHTML='';
+  const total=Math.max(45,(G?G.level:1)+15);
+  let lastN=0;
+  for(let l=1;l<=total;l++){
+    const n=sizeFor(l);
+    if(n!==lastN){const h=document.createElement('div');h.className='grp';h.textContent=n+'×'+n;p.appendChild(h);lastN=n}
+    const b=document.createElement('button');
+    b.textContent=l;
+    if(save.solved[l]!=null)b.classList.add('done');
+    if(G&&G.level===l)b.classList.add('cur');
+    b.onclick=()=>{$('#pw_pick').hidden=true;loadLevel(l)};
+    p.appendChild(b);
+  }
+  $('#pw_pick').hidden=false;
+}
+$('#pw_levels').onclick=openPicker;
+$('#pw_closepick').onclick=()=>{$('#pw_pick').hidden=true};
+
+// ================= SOUND (WebAudio chiptune, no files) =================
+let pwActive=false;
+const Snd=(()=>{
+  let ctx=null,master,mGain,sGain,noiseBuf,timer=null,step=0,nextT=0,hold=false,unlocked=false,keep=null;
+  const st=Object.assign({music:true,sfx:true},save.sound||{});
+  const BPM=138,S=60/BPM/4;
+  const mf=m=>440*Math.pow(2,(m-69)/12);
+  const CH=[{r:45,a:[69,72,76,81]},{r:41,a:[65,69,72,77]},{r:48,a:[72,76,79,84]},{r:43,a:[67,71,74,79]}];
+  const PROG=[0,1,2,3,0,1,2,3];
+  const _=null;
+  const MEL=[
+    [81,_,_,81,79,_,76,_,72,_,76,_,79,_,_,_],
+    [77,_,_,77,76,_,72,_,69,_,72,_,76,_,_,_],
+    [79,_,_,79,76,_,72,_,76,_,79,_,84,_,_,_],
+    [83,_,_,83,81,_,79,_,74,_,79,_,71,_,67,_]];
+  const ARP=[0,1,2,3,2,1,2,3];
+  function ensure(){
+    if(!ctx){
+      const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return false;
+      ctx=new AC();
+      master=ctx.createGain();master.gain.value=.9;master.connect(ctx.destination);
+      mGain=ctx.createGain();mGain.gain.value=.17;mGain.connect(master);
+      sGain=ctx.createGain();sGain.gain.value=.4;sGain.connect(master);
+      noiseBuf=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate);
+      const d=noiseBuf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+    }
+    if(ctx.state!=='running'){try{ctx.resume()}catch(e){}}
+    return true;
+  }
+  // iOS mutes WebAudio when the ringer switch is off; a looping silent <audio> flips it to "playback" mode.
+  function silentKeepAlive(){
+    if(keep)return;
+    try{
+      const n=4000,b=new Uint8Array(44+n),v=new DataView(b.buffer);
+      const w=(o,t)=>{for(let i=0;i<t.length;i++)b[o+i]=t.charCodeAt(i)};
+      w(0,'RIFF');v.setUint32(4,36+n,true);w(8,'WAVEfmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);
+      v.setUint32(24,8000,true);v.setUint32(28,8000,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,'data');v.setUint32(40,n,true);
+      for(let i=0;i<n;i++)b[44+i]=128;
+      keep=new Audio(URL.createObjectURL(new Blob([b],{type:'audio/wav'})));
+      keep.loop=true;keep.volume=.01;
+      const pr=keep.play();if(pr&&pr.catch)pr.catch(()=>{});
+    }catch(e){}
+  }
+  function tone(type,f,t,d,vol,dest,to){
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.type=type;o.frequency.setValueAtTime(f,t);
+    if(to)o.frequency.exponentialRampToValueAtTime(to,t+d);
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.006);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+    o.connect(g);g.connect(dest);o.start(t);o.stop(t+d+.03);
+  }
+  function noise(t,d,vol,type,freq,dest){
+    const src=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain();
+    src.buffer=noiseBuf;f.type=type;f.frequency.value=freq;
+    g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);
+    src.connect(f);f.connect(g);g.connect(dest);src.start(t,Math.random()*.5);src.stop(t+d+.02);
+  }
+  function sched(i,t){
+    const bar=Math.floor(i/16),k=i%16,ch=CH[PROG[bar]];
+    // bass
+    if(k%2===0)tone('triangle',mf((k%8===6)?ch.r+12:ch.r),t,S*1.7,.9,mGain);
+    // arpeggio
+    tone('square',mf(ch.a[ARP[i%8]]),t,S*.9,bar>=4?.16:.3,mGain);
+    // melody
+    if(bar>=4){const m=MEL[bar-4][k];if(m!=null)tone('square',mf(m),t,S*2.2,.42,mGain)}
+    // drums
+    if(k%4===0)tone('sine',150,t,.12,1,mGain,45);
+    if(k%8===4)noise(t,.11,.55,'bandpass',1800,mGain);
+    if(k%2===1)noise(t,.03,.18,'highpass',7000,mGain);
+  }
+  function pump(){
+    if(!ctx)return;
+    while(nextT<ctx.currentTime+.15){sched(step,nextT);nextT+=S;step=(step+1)%128}
+  }
+  function startMusic(){
+    if(!pwActive||!ctx||timer||!st.music||hold)return;
+    nextT=ctx.currentTime+.06;timer=setInterval(pump,30);
+  }
+  function stopMusic(){if(timer){clearInterval(timer);timer=null}}
+  function persistSt(){save.sound={music:st.music,sfx:st.sfx};persist()}
+  const api={
+    st,
+    unlock(){
+      if(!ensure())return;
+      if(!unlocked){unlocked=true;silentKeepAlive()}
+      startMusic();
+    },
+    toggleMusic(){st.music=!st.music;persistSt();if(st.music){if(ensure())startMusic()}else stopMusic();return st.music},
+    toggleSfx(){st.sfx=!st.sfx;persistSt();if(st.sfx&&ensure())api.sfx('cat');return st.sfx},
+    hold(){hold=true;stopMusic()},
+    release(){hold=false;if(unlocked)startMusic()},
+    pause(){stopMusic();if(ctx&&ctx.state==='running')ctx.suspend();if(keep)try{keep.pause()}catch(e){}},
+    resume(){if(pwActive&&ctx){ctx.resume();startMusic();if(keep)try{keep.play().catch(()=>{})}catch(e){}}},
+    sfx(name){
+      if(!pwActive||!st.sfx||!ctx||ctx.state!=='running')return;
+      const t=ctx.currentTime+.01;
+      switch(name){
+        case'x':tone('square',330,t,.06,.5,sGain);break;
+        case'cat':tone('square',660,t,.07,.55,sGain);tone('square',990,t+.07,.12,.55,sGain);break;
+        case'clear':tone('triangle',260,t,.09,.7,sGain,150);break;
+        case'buzz':tone('square',660,t,.05,.45,sGain);tone('sawtooth',150,t+.06,.22,.6,sGain,80);break;
+        case'lose':[392,330,262,196].forEach((f,i)=>tone('sawtooth',f,t+i*.16,.2,.6,sGain,f*.9));break;
+        case'undo':tone('square',500,t,.08,.45,sGain,300);break;
+        case'hint':[784,988,1175,1568].forEach((f,i)=>tone('square',f,t+i*.07,.1,.45,sGain));break;
+      }
+    },
+    win(){
+      api.hold();
+      if(!pwActive||!ctx||ctx.state!=='running'||!st.sfx)return;
+      const t=ctx.currentTime+.05,n=[523,659,784,1047,784,1047,1319];
+      n.forEach((f,i)=>{tone('square',f,t+i*.11,i===n.length-1?.7:.13,.5,sGain);tone('triangle',f/2,t+i*.11,i===n.length-1?.7:.13,.8,sGain)});
+    }
+  };
+  return api;
+})();
+const unlockOnce=()=>{if(pwActive)Snd.unlock()};
+document.addEventListener('click',unlockOnce,true);
+document.addEventListener('touchend',unlockOnce,true);
+document.addEventListener('visibilitychange',()=>{if(pwActive)document.hidden?Snd.pause():Snd.resume()});
+function syncSndBtns(){$('#pw_mus').classList.toggle('off',!Snd.st.music);$('#pw_sfx').classList.toggle('off',!Snd.st.sfx);$('#pw_sfx').textContent=Snd.st.sfx?'🔊':'🔇'}
+$('#pw_mus').onclick=()=>{Snd.toggleMusic();syncSndBtns()};
+$('#pw_sfx').onclick=()=>{Snd.toggleSfx();syncSndBtns()};
+syncSndBtns();
+
+
+const pwEl=document.getElementById('pw');
+let pwLoaded=false;
+function pwOpen(){
+  pwActive=true;window.__pwOpen=true;pwEl.classList.add('open');pwEl.scrollTop=0;
+  try{document.querySelector('meta[name=theme-color]').setAttribute('content','#f4efe6')}catch(e){}
+  if(!pwLoaded){pwLoaded=true;loadLevel(save.level||1)}else sizeUnits();
+  Snd.unlock();
+}
+function pwClose(){
+  Snd.pause();pwActive=false;window.__pwOpen=false;pwEl.classList.remove('open');
+  clearInterval(timerId);
+  if(G&&G.started&&!G.won&&!G.over){G.started=false;} // timer restarts on next tap
+  try{window.__pwRestoreTheme&&window.__pwRestoreTheme()}catch(e){}
+}
+document.getElementById('pw_exit').onclick=pwClose;
+window.__pwOpenFn=pwOpen;
+window.__pwDbg={get G(){return G}};
+window.addEventListener('keydown',e=>{if(pwActive){e.stopPropagation()}},true);
+window.addEventListener('keyup',e=>{if(pwActive){e.stopPropagation()}},true);
+
+
 })();
 </script>
 </body>
