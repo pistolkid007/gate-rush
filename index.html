@@ -66,7 +66,7 @@
     <input id="nm" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="YOUR NAME">
     <button id="nmok">SAVE SCORE</button></div>
   <div id="lb"></div>
-  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1124d</div>
+  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1124e</div>
 </div></div>
 <button id="bomb" aria-label="Launch bomb" data-n="0">💣</button>
 <button id="snd" aria-label="Toggle sound">🔊</button>
@@ -172,7 +172,7 @@ function spawnWave(){
     floatText('BOSS INCOMING',cx,H*0.37,'#ffb36b',28);
   }
   if(w>=80&&w%2===1){
-    const have=enemies.filter(e=>e.rkt&&!e.dead).length, add=Math.min(8-have,2+Math.floor((w-80)/20));
+    const have=enemies.filter(e=>e.rkt&&!e.dead).length, add=Math.min(Math.min(8,3+Math.floor((w-80)/10))-have,1+Math.floor((w-80)/20));
     for(let i=0;i<add;i++){
       const side=((have+i)&1)?1:-1, rh=Math.round(Math.max(500+(w-75)*45,6*(S.gun>=5?400:S.gun>=3?120:20)*rate()));
       enemies.push({x:side*rnd(2.4,3.6),d:46+i*3,hp:rh,max:rh,rkt:true,ft:rnd(0.5,1.5),vol:0,el:false,rad:0.8,seed:Math.random()*6.28,flash:0,dead:false});
@@ -464,12 +464,12 @@ function updateLaser(dt){
   }
   if(L.x-half<-2.1&&gates.length){hot=true;hitGate(gates[0],L.x,sdps*dt);}
   if(L.x+half>2.1&&M.state==='live'){hot=true;hitMega(L.x,sdps*dt,true);}
-  S.heat+=((S.lz>=2?0.11:0.1)+(hot?(S.lz>=2?0.15:0.13):0))*dt+kills*0.0008;
-  if(S.heat>=1){S.heat=1;S.coolT=S.lz>=2?4.0:3.0;L.on=false;burst(cx,py-u*2,26,'#ff6a3a',240,4);floatText('🔥 LASER OVERHEAT',cx,H*0.45,'#ff8a4a',26);beep(160,0.4,'sawtooth',0.1,-120);vib(80);}
+  S.heat+=((S.lz>=2?0.09:0.1)+(hot?(S.lz>=2?0.12:0.13):0))*dt+kills*0.0008;
+  if(S.heat>=1){S.heat=1;S.coolT=S.lz>=2?3.0:2.5;L.on=false;burst(cx,py-u*2,26,'#ff6a3a',240,4);floatText('🔥 LASER OVERHEAT',cx,H*0.45,'#ff8a4a',26);beep(160,0.4,'sawtooth',0.1,-120);vib(80);}
   for(const sh of shells){
     if(sh.dead||sh.d<=0.9||Math.abs(sh.x-L.x)>=half+0.4)continue;
     if(sh.missile){
-      if(sh.jam){sh.dead=true;S.jam=1.6;burst(scrX(sh.x,sh.d),scrY(sh.d)-u*0.4,30,'#6fe3ff',260,4);floatText('⚡ LASER JAMMED',cx,H*0.45,'#6fe3ff',26);beep(300,0.3,'sawtooth',0.1,-200);vib(60);break;}
+      if(sh.jam){sh.dead=true;S.jam=1.0;burst(scrX(sh.x,sh.d),scrY(sh.d)-u*0.4,30,'#6fe3ff',260,4);floatText('⚡ LASER JAMMED',cx,H*0.45,'#6fe3ff',26);beep(300,0.3,'sawtooth',0.1,-200);vib(60);break;}
       sh.hp-=(S.lz>=2?260:100)*dt;
       if(sh.hp<=0){sh.dead=true;burst(scrX(sh.x,sh.d),scrY(sh.d)-u*0.4,8,'#ffd1dc',140,3);}
     }else{sh.dead=true;burst(scrX(sh.x,sh.d),scrY(sh.d)-u*0.4,8,'#ffd1dc',140,3);}
@@ -680,7 +680,7 @@ function update(dt){
     if(sh.d<=0.8){
       const hitP=Math.abs(sh.x-player.x)<(sh.missile?(sh.arm?1.4:0.9):sh.dmg>1?0.85:0.6);
       burst(scrX(sh.x,0.8),scrY(0.8)-8,hitP?(sh.dmg>1?18:5):(sh.dmg>1?8:2),'#ff9a3d',sh.dmg>1?200:120,sh.dmg>1?4:2.5);
-      if(hitP&&playing){hurt(sh.dmg);if(sh.jam&&S.lz>0)S.jam=Math.max(S.jam,1.6);}
+      if(hitP&&playing){hurt(sh.dmg);if(sh.jam&&S.lz>0)S.jam=Math.max(S.jam,1.0);}
       shells.splice(i,1);
     }
   }
@@ -688,7 +688,7 @@ function update(dt){
   if(playing&&S.lz>=1&&S.wave>=80){
     S.droneT-=dt;
     if(S.droneT<=0){
-      S.droneT=Math.max(3.2,6.5-(S.wave-75)*0.04);
+      S.droneT=Math.max(3.5,10-(S.wave-80)*0.06);
       const nd=S.wave>=110?2:1, side=Math.random()<0.5?-1:1;
       for(let i=0;i<nd;i++)shells.push({x:(i?-side:side)*5.6,d:15+i*3,v:11,dmg:2,hp:45,max:45,missile:true,jam:true,drone:true,hv:9});
       beep(520,0.1,'square',0.05,200);
@@ -722,8 +722,8 @@ function update(dt){
         const sg=e.x<0?-1:1; e.x=sg*clamp(Math.abs(e.x)+Math.sin(T*0.7+e.seed)*0.35*dt,2.3,3.9);
         e.ft-=dt;
         if(e.ft<=0&&playing){
-          e.ft=Math.max(1.8,3.2-(S.wave-75)*0.03); e.vol++;
-          const cnt=5+Math.min(3,Math.floor((S.wave-75)/25)), hm=450+Math.floor((S.wave-75)*5), dm=3+Math.floor((S.wave-75)/60), jv=e.vol%2===0;
+          e.ft=Math.max(1.8,4.6-(S.wave-80)*0.045); e.vol++;
+          const cnt=4+Math.min(4,Math.floor((S.wave-80)/20)), hm=400+Math.floor((S.wave-80)*5), dm=2+Math.floor((S.wave-80)/40), jv=e.vol%2===0;
           for(let i=0;i<cnt;i++)shells.push({x:e.x+(i-(cnt-1)/2)*0.9,d:e.d-0.8-i*0.7,v:9,dmg:dm,hp:hm,max:hm,missile:true,arm:true,jam:jv&&i===0});
           beep(240,0.12,'square',0.05,60);
         }
@@ -1448,7 +1448,7 @@ if(hasSave()){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY));if(d&&d.v==
 window.__dbg={boardSwipe,boardTap,get board(){return S.board},gameOver,pauseGame,resumeGame,saveGame,loadGame,continueSaved,get paused(){return paused},S,M,player,throwBomb,setMega,spawnWave,hitMega,update,draw,startGame,reset,get enemies(){return enemies},get gates(){return gates},get bullets(){return bullets},get shells(){return shells},get flyBombs(){return flyBombs}};
 requestAnimationFrame(frame);
 })();
-const BUILD='1124d';
+const BUILD='1124e';
 async function checkUpdate(){
   try{
     const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}); if(!r.ok)return;
