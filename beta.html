@@ -48,6 +48,7 @@
   #bomb.empty{opacity:.45;filter:grayscale(.6)}
   #pz{position:fixed;right:12px;bottom:calc(60px + env(safe-area-inset-bottom,0px));z-index:5;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(0,0,0,.45);color:#fff;font-size:18px}
   #zm{margin-top:10px;padding:12px 22px;border-radius:12px;border:1px solid rgba(160,255,140,.5);background:rgba(120,200,90,.18);color:#d9ffc8;font-size:16px;font-weight:800}
+  #qt{margin-top:10px;padding:10px 22px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.8);font-size:15px;font-weight:700}
   #sec{margin-top:10px;padding:12px 22px;border-radius:12px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.08);color:#fff;font-size:16px;font-weight:700}
   #snd{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:5;width:40px;height:40px;
     border-radius:20px;border:0;background:rgba(0,0,0,.35);color:#fff;font-size:18px;touch-action:manipulation}
@@ -63,12 +64,13 @@
   <div class="how">Drag to move · auto-fire</div>
   <button id="go">PLAY</button>
   <button id="sec" style="display:none"></button>
+  <button id="qt" style="display:none">QUIT TO MENU</button>
   <button id="zm"></button>
   <div id="nameBox" style="display:none"><div class="nbt">NEW HIGH SCORE! Enter name or initials</div>
     <input id="nm" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="YOUR NAME">
     <button id="nmok">SAVE SCORE</button></div>
   <div id="lb"></div>
-  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1126d</div>
+  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1127c</div>
 </div></div>
 <button id="bomb" aria-label="Launch bomb" data-n="0">💣</button>
 <button id="snd" aria-label="Toggle sound">🔊</button>
@@ -306,7 +308,7 @@ function showOv(title,stats,goTxt,secTxt){
   $('ttl').textContent=title; $('sub').style.display='none';
   const st=$('stats'); st.style.display=stats?'block':'none'; st.innerHTML=stats||'';
   $('nameBox').style.display='none'; renderLB(); $('go').textContent=goTxt; const sc=$('sec'); sc.style.display=secTxt?'inline-block':'none'; sc.textContent=secTxt||'';
-  $('zm').style.display=(title==='PAUSED')?'none':'inline-block'; $('ov').classList.remove('hide');
+  $('qt').style.display=(title==='PAUSED')?'inline-block':'none'; $('zm').style.display=(title==='PAUSED')?'none':'inline-block'; $('ov').classList.remove('hide');
 }
 function pauseGame(){
   if(S.mode!=='play'||paused)return;
@@ -340,7 +342,7 @@ function uiTitle(){
   $('go').textContent=Z?'PLAY ZOMBIES':'PLAY';
   $('zm').textContent=Z?'🎯 PLAY GATE RUSH':'🧟 PLAY ZOMBIES'; $('zm').style.display='inline-block';
   $('best').textContent=S.best?('Best: '+S.best):'';
-  const sc=$('sec'); sc.style.display='none';
+  $('qt').style.display='none'; const sc=$('sec'); sc.style.display='none';
   if(hasSave()){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY));if(d&&d.v===1){sc.textContent='CONTINUE · Wave '+d.S.wave;sc.style.display='inline-block';}}catch(e){}}
   renderLB();
 }
@@ -1622,6 +1624,7 @@ $('zm').addEventListener('click',()=>{if(paused)return;applyMode(!Z);refreshBoar
 $('nm').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'){e.preventDefault();submitScore();}});
 $('nm').addEventListener('keyup',e=>e.stopPropagation());
 $('nmok').addEventListener('click',submitScore);
+$('qt').addEventListener('click',()=>{paused=false;S.mode='title';$('pz').style.display='none';syncBomb();uiTitle();$('ov').classList.remove('hide');});
 $('sec').addEventListener('click',()=>{if(paused){paused=false;startGame();}else continueSaved();});
 $('pz').addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();pauseGame();});
 window.addEventListener('keydown',e=>{if(e.key==='p'||e.key==='P'||e.key==='Escape'){if(paused)resumeGame();else pauseGame();}});
@@ -1644,7 +1647,7 @@ applyMode(Z); resize(); reset();
 refreshBoard();
 window.__dbg={get zg(){return zg},applyMode,get Z(){return Z},boardSwipe,boardTap,get board(){return S.board},gameOver,pauseGame,resumeGame,saveGame,loadGame,continueSaved,get paused(){return paused},S,M,player,throwBomb,setMega,spawnWave,hitMega,update,draw,startGame,reset,get enemies(){return enemies},get gates(){return gates},get bullets(){return bullets},get shells(){return shells},get flyBombs(){return flyBombs}};
 requestAnimationFrame(frame);
-const BUILD='1126d';
+const BUILD='1127c';
 async function checkUpdate(){
   try{
     const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}); if(!r.ok)return;
