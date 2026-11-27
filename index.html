@@ -128,7 +128,7 @@
     <input id="nm" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="YOUR NAME">
     <button id="nmok">SAVE SCORE</button></div>
   <div id="lb"></div>
-  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1126e</div>
+  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1126f</div>
 </div></div>
 <div id="pw"><div class="app">
   <div class="top">
@@ -149,13 +149,13 @@
 
   <div class="tools">
     <button id="pw_undo">↶ Undo</button>
-    <button id="pw_hint">💡 Hint</button>
+    <button id="pw_hint">💡 Hint (1)</button>
     <button id="pw_reset">⟲ Clear</button>
-    <button id="pw_auto">Auto ✕</button>
+    <button id="pw_auto">Auto ✕ OFF</button>
   </div>
 
   <div class="help">
-    <b>Rules:</b> one 🐱 in every row, every column and every color. Cats can't touch, even diagonally.
+    <b>Hints:</b> 1 per level, and you get 1 more per level for every 20 levels you clear.<br><b>Auto ✕:</b> when ON, placing a 🐱 automatically fills in ✕ on every square it rules out (its row, column, color and the squares touching it), so you only have to think about what's left. Turn it OFF for the manual challenge.<br><b>Rules:</b> one 🐱 in every row, every column and every color. Cats can't touch, even diagonally.
     Tap a square once for ✕ (ruled out), twice for 🐱, three times to clear. Every puzzle has exactly one answer. <b>Place a cat in the wrong spot and you lose a ❤️. Lose all 3 and the level is over.</b>
   </div>
 </div>
@@ -1708,7 +1708,7 @@ refreshBoard();
 window.__pwRestoreTheme=()=>{try{document.querySelector('meta[name=theme-color]').setAttribute('content',Z?'#232a21':'#143d52')}catch(e){}};
 window.__dbg={get zg(){return zg},applyMode,get Z(){return Z},boardSwipe,boardTap,get board(){return S.board},gameOver,pauseGame,resumeGame,saveGame,loadGame,continueSaved,get paused(){return paused},S,M,player,throwBomb,setMega,spawnWave,hitMega,update,draw,startGame,reset,get enemies(){return enemies},get gates(){return gates},get bullets(){return bullets},get shells(){return shells},get flyBombs(){return flyBombs}};
 requestAnimationFrame(frame);
-const BUILD='1126e';
+const BUILD='1126f';
 async function checkUpdate(){
   try{
     const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}); if(!r.ok)return;
@@ -1955,6 +1955,9 @@ let save={level:1,solved:{},auto:false};
 try{const s=JSON.parse(localStorage.getItem('pawsitions-v1')||'null');if(s)save=Object.assign(save,s)}catch(e){}
 function persist(){try{localStorage.setItem('pawsitions-v1',JSON.stringify(save))}catch(e){}}
 // auto-save the puzzle in progress (board, lives, time) so leaving/closing resumes it
+// 1 hint per level, +1 more per level for every 20 levels reached (21+: 2, 41+: 3 ...)
+const hintsAllowed=lv=>1+Math.floor((Math.max(1,lv)-1)/20);
+const hintsLeft=()=>G?hintsAllowed(G.level)-G.hints:0;
 function saveCur(){
   if(!G)return;
   save.prog=save.prog||{};
@@ -2063,8 +2066,11 @@ function render(){
     el.classList.toggle('bad',bad.has(r*G.n+c));
   }
   $('#pw_undo').disabled=!G.hist.length||G.won||G.over;
-  $('#pw_hint').disabled=G.won||G.over;
+  const hl=hintsLeft();
+  $('#pw_hint').disabled=G.won||G.over||hl<=0;
+  $('#pw_hint').textContent='💡 Hint ('+Math.max(0,hl)+')';
   $('#pw_auto').classList.toggle('on',!!save.auto);
+  $('#pw_auto').textContent='Auto ✕ '+(save.auto?'ON':'OFF');
   saveCur();
 }
 
@@ -2135,7 +2141,7 @@ $('#pw_undo').onclick=()=>{if(busy()||!G.hist.length)return;G.board=G.hist.pop()
 $('#pw_reset').onclick=()=>{if(busy())return;snap();G.board=G.board.map(r=>r.map(()=>0));render()};
 $('#pw_auto').onclick=()=>{save.auto=!save.auto;persist();render()};
 $('#pw_hint').onclick=()=>{
-  if(busy())return;
+  if(busy()||hintsLeft()<=0)return;
   let row=-1;
   for(let r=0;r<G.n;r++)if(G.board[r][G.sol[r]]!==2){row=r;break}
   if(row<0)return;
