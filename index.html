@@ -134,7 +134,7 @@
     <input id="nm" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="YOUR NAME">
     <button id="nmok">SAVE SCORE</button></div>
   <div id="lb"></div>
-  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1127c</div>
+  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1127d</div>
 </div></div>
 <div id="pw"><div class="app">
   <div class="top">
@@ -330,7 +330,7 @@ function spawnWave(){
     beep(200,0.6,'sawtooth',0.12,-120);
   }
   if(w>=20&&(w-20)%2===0){
-    const nch=1+Math.floor((w-20)/16), chp=Math.round(450+(w-20)*45+(w-20)*(w-20)*1.2);
+    const nch=1+Math.floor((w-20)/16), chp=Math.round((450+(w-20)*45+(w-20)*(w-20)*1.2)*(Z?0.5+0.5*Math.max(0,Math.min(1,(w-100)/80)):1));
     for(let i=0;i<nch;i++)enemies.push({x:rnd(-1.4,1.4),d:46+i*3,hp:chp,max:chp,charger:true,el:false,rad:0.75,
       seed:Math.random()*6.28,flash:0,dead:false});
     floatText('⚠ CHARGER INCOMING',cx,H*0.45,'#ff6a6a',28);
@@ -494,7 +494,7 @@ function updateZGates(dt,v,playing){
       const inLane=g.side<0?player.x<-0.15:player.x>0.15;
       if(inLane){
         const before=S.level, after=Math.max(0,before+g.n);
-        S.level=Math.max(0,Math.min(after,Math.max(before,Math.round(zTgt(S.wave)*1.3))));
+        S.level=after;
         const good=S.level>=before;
         floatText((good?'+':'')+(S.level-before)+' SOLDIERS',cx,H*0.55,good?'#7dffb0':'#ff6a5a',28);
         burst(scrX(player.x,0.9),scrY(0.9)-u,20,good?'#6fd0ff':'#ff5a4a',220,4);
@@ -585,7 +585,7 @@ function killEnemy(e,fx){
   const s=F/(F+e.d);
   if(isBig(e)){
     const gain=Z?(e.brute?Math.max(20,Math.ceil(S.level*0.15)):Math.max(2,Math.ceil(S.level*0.04))):(e.assassin?6:e.charger?3:e.brute?20:2);
-    S.score+=(e.assassin?800:e.charger?500:400)+e.max; S.level=Z?Math.min(S.level+gain,Math.max(S.level,Math.round(zTgt(S.wave)*1.3))):S.level+gain; S.hp=Math.min(S.maxHp,S.hp+(e.assassin?8:e.charger?6:4)); S.shake=Math.max(S.shake,0.5);
+    S.score+=(e.assassin?800:e.charger?500:400)+e.max; S.level+=gain; S.hp=Math.min(S.maxHp,S.hp+(e.assassin?8:e.charger?6:4)); S.shake=Math.max(S.shake,0.5);
     const X=scrX(e.x,e.d),Y=scrY(e.d)-u*s*1.5;
     burst(X,Y,45,e.assassin?'#a02bd1':e.charger?'#7a2bd1':'#c4162f',260,6); burst(X,Y,20,'#ffd53d',200,4);
     floatText((e.assassin?'ASSASSIN DOWN':e.charger?'CHARGER DOWN':e.rkt?'LAUNCHER DOWN':e.brute?'BRUTE DOWN':'BOSS DOWN')+' · +'+gain+(Z?' SURVIVORS':' FIREPOWER'),cx,H*0.42,'#ffd27a',22);
@@ -1715,12 +1715,12 @@ refreshBoard();
 window.__pwRestoreTheme=()=>{try{document.querySelector('meta[name=theme-color]').setAttribute('content',Z?'#232a21':'#143d52')}catch(e){}};
 window.__dbg={get zg(){return zg},applyMode,get Z(){return Z},boardSwipe,boardTap,get board(){return S.board},gameOver,pauseGame,resumeGame,saveGame,loadGame,continueSaved,get paused(){return paused},S,M,player,throwBomb,setMega,spawnWave,hitMega,update,draw,startGame,reset,get enemies(){return enemies},get gates(){return gates},get bullets(){return bullets},get shells(){return shells},get flyBombs(){return flyBombs}};
 requestAnimationFrame(frame);
-const BUILD='1127c';
+const BUILD='1127d';
 async function checkUpdate(){
   try{
     const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}); if(!r.ok)return;
     const m=(await r.text()).match(/const BUILD='([^']+)'/);
-    if(m&&m[1]!==BUILD&&!window.__pwOpen&&(S.mode!=='play'||paused)){location.replace(location.pathname+'?v='+m[1]);}
+    if(m&&m[1]!==BUILD&&!window.__pwOpen&&S.mode!=='play'){location.replace(location.pathname+'?v='+m[1]);}
   }catch(e){}
 }
 checkUpdate(); document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate();});
