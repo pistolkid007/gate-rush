@@ -68,7 +68,7 @@
     <input id="nm" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="YOUR NAME">
     <button id="nmok">SAVE SCORE</button></div>
   <div id="lb"></div>
-  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1126c</div>
+  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1126d</div>
 </div></div>
 <button id="bomb" aria-label="Launch bomb" data-n="0">💣</button>
 <button id="snd" aria-label="Toggle sound">🔊</button>
@@ -311,7 +311,7 @@ function showOv(title,stats,goTxt,secTxt){
 function pauseGame(){
   if(S.mode!=='play'||paused)return;
   paused=true; saveGame(); keys.l=keys.r=0;
-  showOv('PAUSED','Wave <b>'+S.wave+'</b> · Firepower <b>'+S.level+'</b><br>Progress saved','RESUME','NEW GAME');
+  showOv('PAUSED','Wave <b>'+S.wave+'</b> · '+(Z?'Squad':'Firepower')+' <b>'+S.level+'</b><br>Progress saved','RESUME','NEW GAME');
 }
 function resumeGame(){
   if(!paused)return; paused=false; $('ov').classList.add('hide'); last=0;
@@ -1644,7 +1644,7 @@ applyMode(Z); resize(); reset();
 refreshBoard();
 window.__dbg={get zg(){return zg},applyMode,get Z(){return Z},boardSwipe,boardTap,get board(){return S.board},gameOver,pauseGame,resumeGame,saveGame,loadGame,continueSaved,get paused(){return paused},S,M,player,throwBomb,setMega,spawnWave,hitMega,update,draw,startGame,reset,get enemies(){return enemies},get gates(){return gates},get bullets(){return bullets},get shells(){return shells},get flyBombs(){return flyBombs}};
 requestAnimationFrame(frame);
-const BUILD='1126c';
+const BUILD='1126d';
 async function checkUpdate(){
   try{
     const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}); if(!r.ok)return;

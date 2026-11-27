@@ -128,7 +128,7 @@
     <input id="nm" maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="YOUR NAME">
     <button id="nmok">SAVE SCORE</button></div>
   <div id="lb"></div>
-  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1126a</div>
+  <div id="best"></div><div style="position:fixed;left:8px;bottom:6px;font:10px system-ui;color:rgba(255,255,255,.45);z-index:5;pointer-events:none">build 1126e</div>
 </div></div>
 <div id="pw"><div class="app">
   <div class="top">
@@ -1708,7 +1708,7 @@ refreshBoard();
 window.__pwRestoreTheme=()=>{try{document.querySelector('meta[name=theme-color]').setAttribute('content',Z?'#232a21':'#143d52')}catch(e){}};
 window.__dbg={get zg(){return zg},applyMode,get Z(){return Z},boardSwipe,boardTap,get board(){return S.board},gameOver,pauseGame,resumeGame,saveGame,loadGame,continueSaved,get paused(){return paused},S,M,player,throwBomb,setMega,spawnWave,hitMega,update,draw,startGame,reset,get enemies(){return enemies},get gates(){return gates},get bullets(){return bullets},get shells(){return shells},get flyBombs(){return flyBombs}};
 requestAnimationFrame(frame);
-const BUILD='1126a';
+const BUILD='1126e';
 async function checkUpdate(){
   try{
     const r=await fetch(location.pathname+'?_='+Date.now(),{cache:'no-store'}); if(!r.ok)return;
@@ -1954,13 +1954,23 @@ const $=s=>document.querySelector(s);
 let save={level:1,solved:{},auto:false};
 try{const s=JSON.parse(localStorage.getItem('pawsitions-v1')||'null');if(s)save=Object.assign(save,s)}catch(e){}
 function persist(){try{localStorage.setItem('pawsitions-v1',JSON.stringify(save))}catch(e){}}
+// auto-save the puzzle in progress (board, lives, time) so leaving/closing resumes it
+function saveCur(){
+  if(!G)return;
+  save.prog=save.prog||{};
+  if(G.won||G.over){delete save.prog[G.level];persist();return}
+  const el=G.started?Math.floor((Date.now()-G.t0)/1000):G.elapsed;
+  save.prog[G.level]={board:G.board,lives:G.lives,elapsed:el,hints:G.hints,wrong:[...G.wrong]};
+  const ks=Object.keys(save.prog);if(ks.length>12)delete save.prog[ks[0]];
+  persist();
+}
 
 const boardEl=$('#pw_board');
 let G=null,cells=[],timerId=null;
 
 function fmt(s){return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
 function tick(){if(G&&G.started&&!G.won){G.elapsed=Math.floor((Date.now()-G.t0)/1000);$('#pw_timer').textContent=fmt(G.elapsed)}}
-function startTimer(){if(G.started)return;G.started=true;G.t0=Date.now();clearInterval(timerId);timerId=setInterval(tick,500)}
+function startTimer(){if(G.started)return;G.started=true;G.t0=Date.now()-(G.elapsed||0)*1000;clearInterval(timerId);timerId=setInterval(tick,500)}
 
 // Puzzles are built in a background worker so big grids never freeze the screen; next level is prefetched.
 let worker=null;const cache={},waiting={},asked={};let loadToken=0;
@@ -1983,6 +1993,7 @@ const busy=()=>!G||G.won||G.over||boardEl.classList.contains('loading');
 
 function renderLives(){
   $('#pw_lives').innerHTML=Array.from({length:3},(_,i)=>'<span class="heart'+(i<G.lives?'':' lost')+'">❤️</span>').join('');
+  saveCur();
 }
 
 function loadLevel(level){
@@ -2000,6 +2011,8 @@ function loadLevel(level){
     if(token!==loadToken)return;
     G={level,n:p.n,reg:p.reg,sol:p.sol,board:Array.from({length:p.n},()=>new Array(p.n).fill(0)),hist:[],started:false,t0:0,elapsed:0,hints:0,won:false,over:false,lives:3,wrong:new Set()};
     save.level=level;persist();
+    try{const pr=save.prog&&save.prog[level];
+      if(pr&&pr.board&&pr.board.length===p.n&&pr.lives>0){G.board=pr.board.map(r=>r.slice());G.lives=pr.lives;G.elapsed=pr.elapsed||0;G.hints=pr.hints||0;G.wrong=new Set(pr.wrong||[]);$('#pw_timer').textContent=fmt(G.elapsed);}}catch(e){}
     build();render();renderLives();
     boardEl.className='';
     $('#pw_sizetxt').textContent=p.n+'×'+p.n;
@@ -2052,6 +2065,7 @@ function render(){
   $('#pw_undo').disabled=!G.hist.length||G.won||G.over;
   $('#pw_hint').disabled=G.won||G.over;
   $('#pw_auto').classList.toggle('on',!!save.auto);
+  saveCur();
 }
 
 function snap(){G.hist.push(G.board.map(r=>r.slice()));if(G.hist.length>300)G.hist.shift()}
@@ -2277,7 +2291,7 @@ const Snd=(()=>{
 const unlockOnce=()=>{if(pwActive)Snd.unlock()};
 document.addEventListener('click',unlockOnce,true);
 document.addEventListener('touchend',unlockOnce,true);
-document.addEventListener('visibilitychange',()=>{if(pwActive)document.hidden?Snd.pause():Snd.resume()});
+document.addEventListener('visibilitychange',()=>{if(pwActive)document.hidden?(Snd.pause(),saveCur()):Snd.resume()});
 function syncSndBtns(){$('#pw_mus').classList.toggle('off',!Snd.st.music);$('#pw_sfx').classList.toggle('off',!Snd.st.sfx);$('#pw_sfx').textContent=Snd.st.sfx?'🔊':'🔇'}
 $('#pw_mus').onclick=()=>{Snd.toggleMusic();syncSndBtns()};
 $('#pw_sfx').onclick=()=>{Snd.toggleSfx();syncSndBtns()};
@@ -2295,7 +2309,7 @@ function pwOpen(){
 function pwClose(){
   Snd.pause();pwActive=false;window.__pwOpen=false;pwEl.classList.remove('open');
   clearInterval(timerId);
-  if(G&&G.started&&!G.won&&!G.over){G.started=false;} // timer restarts on next tap
+  if(G&&G.started&&!G.won&&!G.over){saveCur();G.elapsed=Math.floor((Date.now()-G.t0)/1000);G.started=false;} // timer resumes on next tap
   try{window.__pwRestoreTheme&&window.__pwRestoreTheme()}catch(e){}
 }
 document.getElementById('pw_exit').onclick=pwClose;
